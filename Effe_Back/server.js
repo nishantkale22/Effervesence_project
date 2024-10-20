@@ -2,34 +2,33 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const path = require('path');
-const { httpLogger } = require('./middleware/logger'); // Import HTTP logger
-const errorHandler = require('./middleware/errorHandler'); // Import error handler
-const PORT = process.env.PORT || 4000;
+const { httpLogger } = require('./middleware/logger');
+const errorHandler = require('./middleware/errorHandler');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const connectDB = require('./config/dbConn');
-const User = require('./models/User'); // Import User model
+const PORT = process.env.PORT || 4000;
 
-console.log(process.env.NODE_ENV);
+console.log(`Environment: ${process.env.NODE_ENV}`);
 
-// Use HTTP request logger middleware
+// Use middleware
 app.use(httpLogger);
-app.use(cors());
+app.use(cors({
+    origin: ['http://localhost:3000', 'https://your-production-url.com'], // Frontend origins
+    credentials: true,
+}));
 app.use(express.json());
 app.use(cookieParser());
-
-// Serve static files from the 'public' folder
 app.use('/', express.static(path.join(__dirname, '/public')));
 
-// Route handling
+// Routes
 app.use('/', require('./routes/root'));
-
-// Add the registration route
+app.use('/auth', require('./routes/authRoutes'));
 app.use('/register', require('./routes/register'));
+app.use('/user', require('./routes/userRoutes')); // Dashboard redirection routes
 
-
-// Handle 404 errors (when no route matches)
+// 404 Not Found handler
 app.all('*', (req, res) => {
     res.status(404);
     if (req.accepts('html')) {
@@ -41,35 +40,31 @@ app.all('*', (req, res) => {
     }
 });
 
-// Use the custom error handler middleware
+// Error handler middleware
 app.use(errorHandler);
 
-// Connect to the database and start the server
+// Start the server with DB connection
 const startServer = async () => {
     try {
-        await connectDB(); // Ensure the database is connected before starting the server
-        app.listen(PORT, () => {
-            console.log(`Server running on port ${PORT}`);
-        });
+        await connectDB();
+        app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
     } catch (error) {
         console.error('Database connection failed:', error);
-        process.exit(1); // Exit the application if the database connection fails
+        process.exit(1);
     }
 };
 
-// Call the function to start the server
 startServer();
 
-// async function getAllUsers() {
-//     try {
-//       const users = await User.find();
-//       console.log('All Users:', users);
-//     } catch (error) {
-//       console.error('Error fetching users:', error);
-//     } finally {
-//     //   mongoose.connection.close(); // Close connection after query
-//     }
-//   }
-  
-//   // Call the function
-//   getAllUsers();
+// Graceful shutdown handlers
+process.on('SIGINT', async () => {
+    console.log('SIGINT received, closing MongoDB connection...');
+    await mongoose.connection.close();
+    process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+    console.log('SIGTERM received, shutting down...');
+    await mongoose.connection.close();
+    process.exit(0);
+});

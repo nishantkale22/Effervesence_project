@@ -1,18 +1,19 @@
 // src/components/RegistrationForm.jsx
 import React, { useState } from 'react';
 import axios from 'axios'; // Import Axios
+import '../styles/registration.css'; // Ensure correct path to your CSS
 
 const RegistrationForm = () => {
-    const [name, setName] = useState(''); // State for name
-    const [photo, setPhoto] = useState(''); // State for photo URL or Base64
-    const [email, setEmail] = useState(''); // State for email
-    const [phone, setPhone] = useState(''); // State for phone
-    const [password, setPassword] = useState(''); // State for password
-    const [userType, setUserType] = useState(''); // State for user type
-    const [role, setRole] = useState(''); // State for role
-    const [department, setDepartment] = useState('none'); // State for department
-    const [errorMessage, setErrorMessage] = useState(''); // State for error messages
-    const [successMessage, setSuccessMessage] = useState(''); // State for success messages
+    const [name, setName] = useState('');
+    const [photo, setPhoto] = useState('');
+    const [email, setEmail] = useState('');
+    const [phone, setPhone] = useState('');
+    const [password, setPassword] = useState('');
+    const [userType, setUserType] = useState('');
+    const [role, setRole] = useState('');
+    const [department, setDepartment] = useState('none');
+    const [errorMessage, setErrorMessage] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
 
     const userTypes = [
         { value: 'core', label: 'Core' },
@@ -22,7 +23,7 @@ const RegistrationForm = () => {
 
     const roles = {
         core: ['festival head', 'operational head'],
-        non_core: ['volunteer', 'coordinator','executive'],
+        non_core: ['volunteer', 'coordinator', 'executive'],
         attendee: ['student', 'outsider'],
     };
 
@@ -30,21 +31,19 @@ const RegistrationForm = () => {
 
     const handleUserTypeChange = (e) => {
         setUserType(e.target.value);
-        setRole(''); // Reset role when user type changes
-        setDepartment('none'); // Reset department when user type changes
+        setRole('');
+        setDepartment('none');
     };
 
     const handleRoleChange = (e) => {
         setRole(e.target.value);
-        // Automatically set department to "none" for core and non_core
         if (userType === 'core' || userType === 'attendee') {
             setDepartment('none');
         }
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault(); // Prevent the default form submission
-
+        e.preventDefault();
         const formData = {
             name,
             photo,
@@ -57,45 +56,87 @@ const RegistrationForm = () => {
         };
 
         try {
-            const response = await axios.post('http://localhost:4000/register', formData); // Adjust URL if needed
-            setSuccessMessage(response.data.message || 'Registration successful!'); // Display success message
-            setErrorMessage(''); // Clear any previous error messages
+            const response = await axios.post('http://localhost:4000/register', formData);
+            setSuccessMessage(response.data.message || 'Registration successful!');
+            setErrorMessage('');
         } catch (error) {
-            setErrorMessage(error.response?.data.message || 'An error occurred during registration.'); // Display error message
-            setSuccessMessage(''); // Clear any previous success messages
+            setErrorMessage(error.response?.data.message || 'An error occurred during registration.');
+            setSuccessMessage('');
         }
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <div>
-                <label>Name:</label>
-                <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
+        <form onSubmit={handleSubmit} className="registration-form">
+            <h1 className="form-title">Registration Form</h1>
+            
+            <div className="form-group">
+                <label htmlFor="name">Name:</label>
+                <input
+                    type="text"
+                    id="name"
+                    className="input"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                />
             </div>
 
-            <div>
-                <label>Photo URL:</label>
-                <input type="text" value={photo} onChange={(e) => setPhoto(e.target.value)} />
+            <div className="form-group">
+                <label htmlFor="photo">Photo URL:</label>
+                <input
+                    type="text"
+                    id="photo"
+                    className="input"
+                    value={photo}
+                    onChange={(e) => setPhoto(e.target.value)}
+                />
             </div>
 
-            <div>
-                <label>Email:</label>
-                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+            <div className="form-group">
+                <label htmlFor="email">Email:</label>
+                <input
+                    type="email"
+                    id="email"
+                    className="input"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                />
             </div>
 
-            <div>
-                <label>Phone:</label>
-                <input type="text" value={phone} onChange={(e) => setPhone(e.target.value)} required />
+            <div className="form-group">
+                <label htmlFor="phone">Phone:</label>
+                <input
+                    type="text"
+                    id="phone"
+                    className="input"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    required
+                />
             </div>
 
-            <div>
-                <label>Password:</label>
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+            <div className="form-group">
+                <label htmlFor="password">Password:</label>
+                <input
+                    type="password"
+                    id="password"
+                    className="input"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                />
             </div>
 
-            <div>
-                <label>User Type:</label>
-                <select value={userType} onChange={handleUserTypeChange} required>
+            <div className="form-group">
+                <label htmlFor="userType">User Type:</label>
+                <select
+                    id="userType"
+                    className="select"
+                    value={userType}
+                    onChange={handleUserTypeChange}
+                    required
+                >
                     <option value="">Select user type</option>
                     {userTypes.map((type) => (
                         <option key={type.value} value={type.value}>
@@ -105,9 +146,16 @@ const RegistrationForm = () => {
                 </select>
             </div>
 
-            <div>
-                <label>Role:</label>
-                <select value={role} onChange={handleRoleChange} disabled={!userType} required>
+            <div className="form-group">
+                <label htmlFor="role">Role:</label>
+                <select
+                    id="role"
+                    className="select"
+                    value={role}
+                    onChange={handleRoleChange}
+                    disabled={!userType}
+                    required
+                >
                     <option value="">Select role</option>
                     {userType &&
                         roles[userType].map((role) => (
@@ -118,9 +166,15 @@ const RegistrationForm = () => {
                 </select>
             </div>
 
-            <div>
-                <label>Department:</label>
-                <select value={department} onChange={(e) => setDepartment(e.target.value)} disabled={userType === 'core' || userType === 'attendee'}>
+            <div className="form-group">
+                <label htmlFor="department">Department:</label>
+                <select
+                    id="department"
+                    className="select"
+                    value={department}
+                    onChange={(e) => setDepartment(e.target.value)}
+                    disabled={userType === 'core' || userType === 'attendee'}
+                >
                     <option value="none">None</option>
                     {userType === 'non_core' &&
                         departments.map((dept) => (
@@ -131,10 +185,10 @@ const RegistrationForm = () => {
                 </select>
             </div>
 
-            <button type="submit">Register</button>
+            <button type="submit" className="button">Register</button>
 
-            {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
-            {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+            {successMessage && <p className="success-message">{successMessage}</p>}
+            {errorMessage && <p className="error-message">{errorMessage}</p>}
         </form>
     );
 };
