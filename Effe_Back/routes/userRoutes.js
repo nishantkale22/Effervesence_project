@@ -32,4 +32,29 @@ router.get('/:userType/:role/:department/dashboard/:_id', verifyJWT, async (req,
     }
 });
 
+router.get('/profile/:_id',verifyJWT,async(req,res)=>{
+    console.log('data requested')
+    const { _id } = req.params;
+    
+
+    
+    try {
+        // Fetch user data from the database
+        const user = await User.findById(_id);
+        
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Send the user data along with dashboard message
+        res.json({ 
+            user 
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+} );
+
+
 module.exports = router;
