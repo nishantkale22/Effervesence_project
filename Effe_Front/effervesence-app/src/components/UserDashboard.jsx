@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { useParams, NavLink } from 'react-router-dom'; // Import NavLink for navigation
 import axiosInstance from '../api/axiosInstance'; 
-import { useParams } from 'react-router-dom';
+import '../styles/dashboard.css'; // Add CSS for styling
 
 const UserDashboard = () => {
     const { userType, role, department, _id } = useParams();
@@ -10,13 +11,14 @@ const UserDashboard = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const {data} = await axiosInstance.get(`/user/${userType}/${role}/${department}/dashboard/${_id}`, {
-                    headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-                });
+                const { data } = await axiosInstance.get(
+                    `/user/${userType}/${role}/${department}/dashboard/${_id}`,
+                    { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` } }
+                );
                 setUser(data.user);
             } catch (err) {
                 setError('Failed to fetch user data.');
-                console.error(err); // Log the error for debugging
+                console.error(err); // For debugging
             }
         };
 
@@ -24,57 +26,27 @@ const UserDashboard = () => {
     }, [userType, role, department, _id]);
 
     return (
-        <div>
-            {/* <h1>{`${_id}`}</h1> */}
-                {/* <h1>{`${localStorage.getItem('accessToken')}`}</h1> */}
-
+        <div className="dashboard-container">
             <h2>{role} Dashboard</h2>
-            {error ? (
-                <p>{error}</p>
-            ) : user ? (
-                <UserDetails user={user} />
-            ) : (
-                <p>Loading user data...</p>
-            )}
+
+            {/* Navbar with links to profile and tasks */}
+            <nav className="navbar">
+                <NavLink to={`/user/profile/${_id}`} activeClassName="active">Profile</NavLink>
+                <NavLink to={`/user/tasks/${_id}`} activeClassName="active">Tasks</NavLink>
+                <NavLink to={`/user/notifications/${_id}`} activeClassName="active">Notifications</NavLink>
+            </nav>
+
+            <div className="content">
+                {error ? (
+                    <p>{error}</p>
+                ) : user ? (
+                    <p>Welcome, {user.name}!</p> // Display welcome message
+                ) : (
+                    <p>Loading user data...</p>
+                )}
+            </div>
         </div>
     );
 };
-
-const UserDetails = ({ user }) => (
-    <div>
-        <h3>Welcome, {user.name}!</h3>
-        <p><strong>Email:</strong> {user.email}</p>
-        <p><strong>Phone:</strong> {user.phone}</p>
-        <p><strong>Department:</strong> {user.department}</p>
-        <p><strong>User Type:</strong> {user.userType}</p>
-        <p><strong>Role:</strong> {user.role}</p>
-        <p><strong>Created At:</strong> {new Date(user.createdAt).toLocaleDateString()}</p>
-
-        {user.photo && <img src={user.photo} alt={`${user.name}'s profile`} style={{ width: '150px', height: '150px' }} />}
-
-        {user.eventsRegistered?.length > 0 && (
-            <UserList title="Registered Events" items={user.eventsRegistered} />
-        )}
-        
-        {user.feedback?.length > 0 && (
-            <UserList title="Feedback" items={user.feedback} />
-        )}
-
-        {user.demands?.length > 0 && (
-            <UserList title="Demands" items={user.demands} />
-        )}
-    </div>
-);
-
-const UserList = ({ title, items }) => (
-    <div>
-        <h4>{title}:</h4>
-        <ul>
-            {items.map((item, index) => (
-                <li key={index}>{item}</li>
-            ))}
-        </ul>
-    </div>
-);
 
 export default UserDashboard;
