@@ -30,12 +30,12 @@ const NonCoreDashboard = () => {
         return (
             <>
                 {role !== 'volunteer' && (
-                    <NavLink to=  {`/user/${department}/volunteers`} activeClassName="active">
+                    <NavLink to=  {`/user/${_id}/${department}/volunteers`} activeClassName="active">
                         Volunteers
                     </NavLink>
                 )}
                 {role !== 'executive' && role !== 'volunteer' && (
-                    <NavLink to={`/user/${department}/executives`} activeClassName="active">
+                    <NavLink to={`/user/${_id}/${department}/executives`} activeClassName="active">
                         Executives
                     </NavLink>
                 )}

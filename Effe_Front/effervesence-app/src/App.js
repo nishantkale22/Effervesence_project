@@ -36,8 +36,8 @@ function App() {
         <Route path="/user/profile/:_id" element={<Profile />} />
         <Route path="/user/tasks/:_id" element={<Tasks />} />
         <Route path="/user/notifications/:_id" element={<Notifications />} />
-        <Route path="/user/:department/volunteers" element={<Volunteers />} />
-        <Route path="/user/:department/executives" element={<Executives />} />
+        <Route path="/user/:_id/:department/volunteers" element={<Volunteers />} />
+        <Route path="/user/:_id/:department/executives" element={<Executives />} />
 
 
       </Routes>
