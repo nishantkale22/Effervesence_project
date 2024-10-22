@@ -67,7 +67,7 @@ const getUserTasks = asyncHandler(async (req, res) => {
 // Controller to get all users
 const getAllUsers = asyncHandler(async (req, res) => {
     try {
-        const users = await User.find({});
+        const users = await User.find({}, '-password' );
         if (users.length === 0) {
             return res.status(404).json({ message: 'No users found' });
         }
@@ -102,7 +102,7 @@ const getAllExecutives = asyncHandler(async (req, res) => {
         const {department} = req.params 
 
         // Find all users with the role of 'executive'
-        const executives = await User.find({ role: 'executive',department:`${department}` });
+        const executives = await User.find({ role: 'executive', department:`${department}` });
 
         if (executives.length === 0) {
             return res.status(404).json({ message: 'No executives found' });
