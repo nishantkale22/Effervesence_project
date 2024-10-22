@@ -3,7 +3,7 @@ import { useParams, NavLink } from 'react-router-dom'; // Import NavLink for nav
 import axiosInstance from '../../api/axiosInstance'; 
 import '../../styles/dashboard.css'; // Add CSS for styling
 
-const UserDashboard = () => {
+const CoreDashboard = () => {
     const {  role, department, _id } = useParams();
     const [user, setUser] = useState(null);
     const [error, setError] = useState('');
@@ -27,7 +27,7 @@ const UserDashboard = () => {
 
     return (
         <div className="dashboard-container">
-            <h2>{role} Dashboard</h2>
+            <h2>{role.toUpperCase()} </h2>
 
             {/* Navbar with links to profile and tasks */}
             <nav className="navbar">
@@ -49,4 +49,4 @@ const UserDashboard = () => {
     );
 };
 
-export default UserDashboard;
+export default CoreDashboard;
