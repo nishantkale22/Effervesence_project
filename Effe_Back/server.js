@@ -23,11 +23,23 @@ app.use(cookieParser());
 app.use('/', express.static(path.join(__dirname, '/public')));
 
 // Routes
+// app.post( async(req,res)=>{
+//     try {
+//         const { id, task, assignedTo, resource } = req.body;
+//         // Your logic for task assignment
+//         res.status(200).send('Task assigned successfully');
+//       } catch (error) {
+//         console.error('Error in assigning task:', error);
+//         res.status(500).send('Task assignment failed');
+//       }
+// });
+
+
 app.use('/', require('./routes/root'));
 app.use('/auth', require('./routes/authRoutes'));
 app.use('/register', require('./routes/register'));
 app.use('/user', require('./routes/userRoutes')); // Dashboard redirection routes
-
+app.use('/task',require('./routes/taskRoutes')) ;
 // 404 Not Found handler
 app.all('*', (req, res) => {
     res.status(404);
