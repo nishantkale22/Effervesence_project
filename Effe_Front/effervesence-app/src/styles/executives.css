@@ -1,0 +1,79 @@
+/* ex.css */
+.executives-container {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.error-message {
+    color: red;
+    text-align: center;
+    font-weight: bold;
+}
+
+.executives-card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    transition: box-shadow 0.2s, max-height 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.executives-card:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.executives-photo {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+.executives-card h3 {
+    margin: 0;
+    font-size: 1.2em;
+}
+
+.executives-details {
+    max-height: 0; /* Start with hidden details */
+    overflow: hidden;
+    transition: max-height 0.4s ease; /* Transition effect */
+}
+
+.executives-card:hover .executives-details {
+    max-height: 200px; /* Set a max height when hovered */
+}
+
+.executives-card p {
+    margin: 5px 0;
+    color: #555;
+}
+
+.assign-button {
+    background-color: #4CAF50; /* Green color */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+}
+
+.assign-button:hover {
+    background-color: #45a049; /* Darker green on hover */
+}

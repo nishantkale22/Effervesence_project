@@ -17,11 +17,24 @@ body {
 }
 
 /* Header */
-.dashboard-container h2 {
-  text-align: center;
+.header {
+  display: flex;
+  justify-content: space-between; /* Aligns title and department */
+  align-items: center; /* Center vertically */
   margin-bottom: 20px;
+}
+
+.header h2 {
   color: #333;
   font-weight: 600;
+  flex: 3; /* Allows title to take available space */
+  text-align: center; /* Center align the title */
+}
+
+.department-label {
+  font-size: 1.2rem; /* Slightly larger font size for department */
+  color: #007bff; /* Bootstrap primary color for department label */
+  margin-left: 20px; /* Space between title and department label */
 }
 
 /* Navbar Styles */
@@ -73,5 +86,16 @@ body {
   .navbar a {
       padding: 10px;
       font-size: 16px;
+  }
+
+  .header {
+      flex-direction: column; /* Stack header items on smaller screens */
+      align-items: center; /* Center items */
+  }
+
+  .department-label {
+      margin-left: 0; /* Reset margin for smaller screens */
+      margin-top: 10px; /* Space above department label */
+      text-align: center; /* Center align for mobile */
   }
 }
