@@ -52,7 +52,7 @@ const postTaskWithResource = asyncHandler (async (req, res) => {
         { _id: { $in: assignedTo } },
         { $push: { tasks: newTask._id } }
       );
-      
+
       res.status(200).send('Task assigned successfully');
       console.log(newTask) ;
     } catch (error) {
@@ -61,6 +61,69 @@ const postTaskWithResource = asyncHandler (async (req, res) => {
     }
   });
 
+  const getTaskResources = asyncHandler (async (req, res) => {
+   try{
+    const {_id} = req.params ;
+
+    const task = await Task.findById(_id).populate('resources') ;
+    const resources = task.resources ;
+
+    if (resources.length === 0) {
+        return res.status(404).json({ message: 'No resources found' });
+    }
+
+    res.json({ resources });
+
+
+   }catch(error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+}
+  });
+
+
+  const postTaskResource = asyncHandler(async (req, res) => {
+    try {
+        const { _id, uploaderId, resource } = req.body; // _id = Task ID, uploaderId = User ID
+
+        // Create a new Resource instance
+        const newResource = new Resource({
+            title: resource.title,
+            description: resource.description,
+            fileType: resource.fileType,
+            fileUrl: resource.fileUrl,
+            uploadedBy: uploaderId, // User uploading the resource
+        });
+
+        // Save the new resource to MongoDB
+        await newResource.save();
+
+        // Update the task by pushing the new resource ID into its resources array
+        const updatedTask = await Task.findByIdAndUpdate(
+            _id,
+            { $push: { resources: newResource._id } },
+            { new: true } // Return the updated task after modification
+        );
+
+        if (!updatedTask) {
+            return res.status(404).json({ message: 'Task not found' });
+        }
+
+        res.status(201).json({
+            message: 'Resource added successfully',
+            resource: newResource,
+            task: updatedTask,
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+
   module.exports = {
     postTaskWithResource,
+    getTaskResources,
+    postTaskResource,
 };

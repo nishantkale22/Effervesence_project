@@ -133,6 +133,23 @@ const getAllCoordinators = asyncHandler(async (req, res) => {
     }
 });
 
+const getUserAllocations = asyncHandler(async (req, res) => {
+    try {
+        const {_id} = req.params ;
+
+        const Tasks = await Task.find({ assignedBy: _id });
+
+        if (Tasks.length === 0) {
+            return res.status(404).json({ message: 'No tasks found' });
+        }
+
+        res.json({ Tasks });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 
 
 module.exports = {
@@ -143,4 +160,5 @@ module.exports = {
     getAllVolunteers,
     getAllExecutives,
     getAllCoordinators,
+    getUserAllocations,
 };

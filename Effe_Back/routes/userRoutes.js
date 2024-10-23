@@ -12,6 +12,9 @@ router.get('/profile/:_id', verifyJWT, userController.getUserById);
 // Route for user tasks
 router.get('/tasks/:_id', verifyJWT, userController.getUserTasks);
 
+router.get('/allocations/:_id',verifyJWT,  userController.getUserAllocations);
+
+
 // Route for fetching volunteers (with corrected route)
 router.get('/:_id/volunteers/:department', verifyJWT, userController.getAllVolunteers);
 
