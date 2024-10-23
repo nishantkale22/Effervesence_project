@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, NavLink } from 'react-router-dom'; // Import NavLink for navigation
+import { useParams, NavLink,useNavigate } from 'react-router-dom'; // Import NavLink for navigation
 import axiosInstance from '../../api/axiosInstance'; 
 import '../../styles/dashboard.css'; // Add CSS for styling
 
@@ -7,7 +7,7 @@ const NonCoreDashboard = () => {
     const { role, department, _id } = useParams();
     const [user, setUser] = useState(null);
     const [error, setError] = useState('');
-
+    const navigate = useNavigate(); // For redirecting user after logout
     useEffect(() => {
         const fetchUserData = async () => {
             try {
@@ -25,14 +25,35 @@ const NonCoreDashboard = () => {
         fetchUserData();
     }, [role, department, _id]);
 
+      // Handle Logout Function
+      const handleLogout = async () => {
+        try {
+            await axiosInstance.post('/auth/logout', {}, { 
+                headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+            });
+
+            localStorage.removeItem('accessToken'); // Clear access token from local storage
+            navigate('/login'); // Redirect to login page
+        } catch (err) {
+            console.error('Logout failed:', err);
+            setError('Logout failed. Please try again.');
+        }
+    };
+
+
     const renderNavLinks = () => {
         // Conditional rendering of Volunteers and Executives links based on role
         return (
             <>
                 {role !== 'volunteer' && (
-                    <NavLink to=  {`/user/${_id}/${department}/volunteers`} activeClassName="active">
-                        Volunteers
-                    </NavLink>
+                    <>
+                        <NavLink to={`/user/${_id}/${department}/volunteers`} activeClassName="active">
+                            Volunteers
+                        </NavLink>
+                        <NavLink to={`/user/allocations/${_id}`} activeClassName="active">
+                            Allocations
+                        </NavLink>
+                    </>
                 )}
                 {role !== 'executive' && role !== 'volunteer' && (
                     <NavLink to={`/user/${_id}/${department}/executives`} activeClassName="active">
@@ -42,6 +63,7 @@ const NonCoreDashboard = () => {
             </>
         );
     };
+    
 
     return (
         <div className="dashboard-container">
@@ -56,6 +78,7 @@ const NonCoreDashboard = () => {
                 <NavLink to={`/user/tasks/${_id}`} activeClassName="active">Tasks</NavLink>
                 <NavLink to={`/user/notifications/${_id}`} activeClassName="active">Notifications</NavLink>
                 {renderNavLinks()} {/* Render Volunteers/Executives links conditionally */}
+                <button onClick={handleLogout} className="logout-button">Logout</button>
             </nav>
 
             <div className="content">

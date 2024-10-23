@@ -23,7 +23,7 @@ const RegistrationForm = () => {
 
     const roles = {
         core: ['festival head', 'operational head'],
-        non_core: ['volunteer', 'coordinator', 'executive'],
+        non_core: ['volunteer',  'executive'],
         attendee: ['student', 'outsider'],
     };
 
