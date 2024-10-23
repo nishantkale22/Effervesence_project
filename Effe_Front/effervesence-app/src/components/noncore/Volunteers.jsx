@@ -8,7 +8,12 @@ const Volunteers = () => {
   const [volunteers, setVolunteers] = useState([]);
   const [selectedVolunteers, setSelectedVolunteers] = useState([]);
   const [taskDetails, setTaskDetails] = useState({ title: '', description: '' });
-  const [resourceDetails, setResourceDetails] = useState({ title: '', description: '', fileType: '', fileUrl: '' });
+  const [resourceDetails, setResourceDetails] = useState({
+    title: '',
+    description: '',
+    fileType: '',
+    fileUrl: ''
+  });
   const [error, setError] = useState('');
   const [isAssigning, setIsAssigning] = useState(false);
   const [attachResource, setAttachResource] = useState(false); // Toggle for resource form
@@ -29,7 +34,7 @@ const Volunteers = () => {
     };
 
     fetchVolunteers();
-  }, [_id,department]);
+  }, [_id, department]);
 
   const handleAssignTask = () => setIsAssigning(!isAssigning);
 
@@ -41,13 +46,20 @@ const Volunteers = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Ensure at least one volunteer is selected
+    if (selectedVolunteers.length === 0) {
+      alert('Please select at least one volunteer.');
+      return;
+    }
+
     const payload = {
-        id: {_id},
-      task: { ...taskDetails  },
+      id: { _id },
+      task: { ...taskDetails },
       assignedTo: selectedVolunteers,
-      resource: attachResource ? { ...resourceDetails } : {}, // Include resource only if attached
+      resource: attachResource ? { ...resourceDetails } : {} // Include resource only if attached
     };
-    console.log('hello')
+
     try {
       await axiosInstance.post('/task/assign', payload, {
         headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
