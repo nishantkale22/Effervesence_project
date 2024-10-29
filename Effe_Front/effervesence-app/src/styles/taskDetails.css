@@ -1,0 +1,106 @@
+/* Styles for the main container */
+.task-details-container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #f4f4f4;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+}
+
+/* Section titles */
+h3 {
+    color: #333;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #4caf50;
+    padding-bottom: 5px;
+}
+
+/* Task Information Box */
+.task-info-box, .assigned-users-box, .task-resources-box {
+    margin-bottom: 30px;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+}
+
+/* Assigned users and resource list */
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    padding: 5px 0;
+    border-bottom: 1px solid #eaeaea;
+}
+
+li a {
+    color: #4caf50;
+    text-decoration: none;
+}
+
+li a:hover {
+    text-decoration: underline;
+}
+
+/* Tooltip for displaying user details */
+.tooltip {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.tooltip .tooltip-text {
+    visibility: hidden;
+    width: 200px;
+    background-color: rgba(0, 0, 0, 0.75);
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%; /* Position the tooltip above the element */
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Error message styling */
+.error-message {
+    color: red;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Resource upload form */
+.resource-upload-form input {
+    margin: 10px 5px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: calc(100% - 24px);
+}
+
+.resource-upload-form button {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.resource-upload-form button:hover {
+    background-color: #45a049;
+}

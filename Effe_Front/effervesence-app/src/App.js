@@ -16,6 +16,8 @@ const NonCoreDashboard = React.lazy(() => import('./components/noncore/NonCoreDa
 const Volunteers = React.lazy(() => import('./components/noncore/Volunteers'));
 const Executives = React.lazy(() => import('./components/noncore/Executives'));
 const Allocations = React.lazy(() => import('./components/Allocations'));
+const TaskDetails = React.lazy(() => import('./components/TaskDetails'));
+
 
 
 
@@ -36,6 +38,8 @@ function App() {
         {/* New Routes for Profile, Tasks, and Notifications */}
         <Route path="/user/profile/:_id" element={<Profile />} />
         <Route path="/user/tasks/:_id" element={<Tasks />} />
+        <Route path="/user/taskdetails/:_id" element={<TaskDetails />} />
+
         <Route path="/user/allocations/:_id" element={<Allocations />} />
         <Route path="/user/notifications/:_id" element={<Notifications />} />
         <Route path="/user/:_id/:department/volunteers" element={<Volunteers />} />
