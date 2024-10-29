@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const verifyJWT = require('../middleware/verifyJWT');
 const userController = require('../controllers/userController');
+const taskController = require('../controllers/taskController');
+
 
 // Route for user dashboard
 router.get('/:userType/:role/:department/dashboard/:_id', verifyJWT, userController.getUserDashboard);
@@ -13,6 +15,8 @@ router.get('/profile/:_id', verifyJWT, userController.getUserById);
 router.get('/tasks/:_id', verifyJWT, userController.getUserTasks);
 
 router.get('/allocations/:_id',verifyJWT,  userController.getUserAllocations);
+
+router.get('/taskdetails/:_id',taskController.getTaskByID )
 
 
 // Route for fetching volunteers (with corrected route)

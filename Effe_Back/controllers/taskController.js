@@ -122,7 +122,33 @@ const postTaskWithResource = asyncHandler (async (req, res) => {
 });
 
 
+const getTaskByID = asyncHandler(async (req, res) => {
+  try {
+    const { _id } = req.params;
+    console.log(_id) 
+
+    if (!_id || _id === 'undefined') {
+      return res.status(400).json({ message: 'Invalid task ID' });
+    }
+
+    const task = await Task.findById(_id)
+    .populate('resources')
+    .populate('assignedBy', 'name email phone')
+    .populate('assignedTo', 'name email phone');
+
+    if (!task) {
+      return res.status(404).json({ message: 'No details found' });
+    }
+
+    res.json({ task });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
   module.exports = {
+    getTaskByID,
     postTaskWithResource,
     getTaskResources,
     postTaskResource,
