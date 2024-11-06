@@ -22,7 +22,7 @@ const userSchema = new Schema({
     type: String,
     enum: [
       'festival head', 'operational head', 'finance',
-      'coordinator', 'volunteer', 'executive',
+       'volunteer', 'executive',
       'student', 'outsider',
     ],
     required: true,

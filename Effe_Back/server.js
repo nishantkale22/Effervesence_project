@@ -8,7 +8,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const connectDB = require('./config/dbConn');
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 5000;
 
 console.log(`Environment: ${process.env.NODE_ENV}`);
 
@@ -36,10 +36,14 @@ app.use('/', express.static(path.join(__dirname, '/public')));
 
 
 app.use('/', require('./routes/root'));
+app.use('/request',require('./routes/requestRoutes')) ;
+
 app.use('/auth', require('./routes/authRoutes'));
 app.use('/register', require('./routes/register'));
 app.use('/user', require('./routes/userRoutes')); // Dashboard redirection routes
 app.use('/task',require('./routes/taskRoutes')) ;
+
+
 // 404 Not Found handler
 app.all('*', (req, res) => {
     res.status(404);

@@ -125,7 +125,7 @@ const postTaskWithResource = asyncHandler (async (req, res) => {
 const getTaskByID = asyncHandler(async (req, res) => {
   try {
     const { _id } = req.params;
-    console.log(_id) 
+    // console.log(_id) 
 
     if (!_id || _id === 'undefined') {
       return res.status(400).json({ message: 'Invalid task ID' });
