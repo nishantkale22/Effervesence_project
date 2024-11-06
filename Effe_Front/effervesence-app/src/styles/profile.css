@@ -1,71 +1,91 @@
-/* Profile Container */
+/* General Profile Container Styling */
 .profile-container {
-    max-width: 800px;
-    margin: 30px auto;
+    font-family: 'Roboto', sans-serif;
+    color: #333;
+    background-color: #f4f6f9;
     padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    max-width: 700px;
+    margin: 30px auto;
+    animation: fadeIn 0.5s ease-in-out;
     text-align: center;
 }
 
 /* Header Styling */
-.profile-container h2 {
-    margin-bottom: 20px;
-    color: #333;
+.profile-header {
+    font-size: 2rem;
     font-weight: 600;
-    font-size: 28px;
+    color: #4a90e2;
+    margin-bottom: 20px;
+    text-align: left; /* Align header text to the left */
 }
 
-/* Profile Card Layout */
+/* Profile Card Styling */
 .profile-card {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    padding: 15px;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s;
+    text-align: left; /* Align profile card content to the left */
+}
+.profile-card:hover {
+    transform: translateY(-5px);
 }
 
-/* Profile Photo */
+/* Profile Photo Styling */
 .profile-photo {
     width: 150px;
     height: 150px;
     border-radius: 50%;
     object-fit: cover;
-    margin-right: 20px;
-    border: 2px solid #004d99;
+    margin-bottom: 15px;
+    border: 3px solid #4a90e2;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
 }
 
-/* Profile Details */
+/* Profile Details Styling */
 .profile-details {
-    text-align: left;
-    flex-grow: 1;
+    font-size: 1rem;
+    color: #555;
+    width: 100%;
+    text-align: left; /* Align text in details section to the left */
 }
-
 .profile-details p {
     margin: 10px 0;
-    font-size: 18px;
-    color: #555;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+.profile-details p:hover {
+    background-color: #e6f4ff;
+}
+.profile-details p strong {
+    color: #333;
+    font-weight: bold;
 }
 
-.profile-details strong {
-    color: #004d99;
+/* Error Message Styling */
+.profile-details p.error {
+    color: #ff5e5e;
+    background-color: #ffe6e6;
+    padding: 10px;
+    border-radius: 5px;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .profile-card {
-        flex-direction: column;
-        align-items: center;
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
     }
-
-    .profile-photo {
-        margin-bottom: 15px;
-    }
-
-    .profile-details {
-        text-align: center;
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }

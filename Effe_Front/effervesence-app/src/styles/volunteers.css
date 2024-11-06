@@ -1,157 +1,229 @@
+/* General Container Styles */
 .volunteers-container {
-    max-width: 800px; /* Set a max width for better layout on larger screens */
-    margin: 20px auto; /* Center the container */
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    max-width: 850px;
+    margin: 25px auto;
+    padding: 25px;
+    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+    border-radius: 15px;
+    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    position: relative;
 }
 
+/* Header Section */
 .header {
     display: flex;
-    justify-content: space-between; /* Space between title and button */
-    align-items: center; /* Align items vertically */
-    margin-bottom: 20px; /* Add space below header */
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
 }
 
+.header h1 {
+    font-size: 2em;
+    color: #333;
+    font-weight: 600;
+    animation: fadeInDown 0.4s ease both;
+}
+
+/* Page Title */
 h2 {
     text-align: center;
-    margin-bottom: 20px;
-    color: #333;
-    font-size: 1.8em; /* Increase font size for better visibility */
-    font-weight: bold; /* Make the title bold */
+    margin-bottom: 25px;
+    color: #444;
+    font-size: 1.8em;
+    font-weight: bold;
+    animation: fadeIn 0.4s ease-in-out both;
 }
 
+/* Error Message */
 .error-message {
-    color: red;
+    color: #ff4d4d;
     text-align: center;
     font-weight: bold;
-    margin-bottom: 10px; /* Add some space below error message */
+    margin-bottom: 15px;
+    font-size: 1.1em;
 }
 
+/* Volunteer Card */
 .volunteer-card {
-    background-color: #ffffff; /* White background for cards */
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 15px;
-    margin: 10px 0;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 15px 20px;
+    margin: 12px 0;
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    transition: box-shadow 0.3s ease, transform 0.3s ease; /* Smooth shadow transition */
+    align-items: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
     position: relative;
-    overflow: hidden;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for cards */
 }
 
 .volunteer-card:hover {
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
-    transform: translateY(-2px); /* Slight lift effect on hover */
+    transform: scale(1.03);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
 }
 
 .volunteer-photo {
-    width: 70px; /* Slightly larger profile picture */
-    height: 70px;
-    border-radius: 50%; /* Circular image */
-    margin-right: 15px;
-    object-fit: cover; /* Maintain aspect ratio */
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    margin-right: 20px;
+    object-fit: cover;
+    border: 2px solid #ddd;
 }
 
+/* Volunteer Card Content */
 .volunteer-card h3 {
-    margin: 10px 0 5px 0; /* Spacing adjustments */
-    font-size: 1.4em; /* Increase size for emphasis */
-    color: #333; /* Darker text for readability */
+    margin: 0;
+    font-size: 1.4em;
+    color: #333;
+    font-weight: 600;
 }
 
 .volunteer-details {
-    max-height: 0; /* Start with hidden details */
-    overflow: hidden;
-    transition: max-height 0.4s ease; /* Transition effect */
-}
-
-.volunteer-card:hover .volunteer-details {
-    max-height: 200px; /* Set a max height when hovered */
+    font-size: 0.9em;
+    color: #666;
+    margin-top: 5px;
 }
 
 .volunteer-card p {
     margin: 5px 0;
-    color: #555;
-    font-size: 0.9em; /* Slightly smaller for detail text */
+    color: #777;
 }
 
-/* Button Styles */
+/* Assign Task Button */
 .assign-task-button {
-    background-color: #4CAF50; /* Primary color */
-    color: white;
+    background-color: #4CAF50;
+    color: #fff;
     border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1em; /* Consistent font size */
-    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transition */
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.2);
 }
 
 .assign-task-button:hover {
-    background-color: #45a049; /* Darker green on hover */
-    transform: translateY(-2px); /* Lift effect on hover */
+    background-color: #3d9b3e;
+    transform: scale(1.05);
 }
 
 .assign-task-button:active {
-    background-color: #367e3a; /* Even darker green when clicked */
-    transform: translateY(0); /* Reset lift effect */
+    background-color: #357a34;
 }
 
-/* Task Assignment Form Styles */
+/* Task Assignment Form */
 .task-assignment-form {
-    background-color: #ffffff; /* White background for the form */
+    background-color: #ffffff;
     border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 20px; /* Add padding for spacing */
-    margin-top: 20px; /* Add space above the form */
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for form */
+    border-radius: 15px;
+    padding: 20px;
+    margin-top: 25px;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    animation: slideInUp 0.5s ease both;
+    overflow: hidden;
 }
 
 .task-assignment-form h3 {
-    margin-bottom: 10px; /* Space below the form title */
-    font-size: 1.5em; /* Increase size for emphasis */
-    color: #333; /* Darker text for readability */
+    margin-bottom: 15px;
+    font-size: 1.6em;
+    color: #333;
+    font-weight: 600;
+}
+
+.task-assignment-form input,
+.task-assignment-form textarea,
+.task-assignment-form select {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    transition: border-color 0.3s ease;
+    outline: none;
+    background: #f8f8f8;
 }
 
 .task-assignment-form textarea {
-    width: 100%; /* Full width */
-    height: 100px; /* Set height */
-    border: 1px solid #ddd; /* Light border */
-    border-radius: 5px; /* Rounded corners */
-    padding: 10px; /* Padding inside the textarea */
-    resize: none; /* Disable resizing */
-    transition: border-color 0.3s ease; /* Transition for border color */
+    height: 120px;
+    resize: none;
 }
 
-.task-assignment-form textarea:focus {
-    border-color: #4CAF50; /* Change border color on focus */
-    outline: none; /* Remove outline */
+.task-assignment-form input:focus,
+.task-assignment-form textarea:focus,
+.task-assignment-form select:focus {
+    border-color: #4CAF50;
+    background: #ffffff;
 }
 
+/* Form Buttons */
 .task-assignment-form button {
-    background-color: #4CAF50; /* Primary color */
+    background-color: #4CAF50;
     color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
+    padding: 12px 20px;
+    border-radius: 8px;
     cursor: pointer;
-    margin-top: 10px; /* Space above the button */
-    margin-right:3px;
-    margin-left:2px ;
-    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transition */
+    font-size: 1em;
+    margin-top: 15px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 3px 10px rgba(76, 175, 80, 0.2);
 }
 
 .task-assignment-form button:hover {
-    background-color: #45a049; /* Darker green on hover */
-    transform: translateY(-2px); /* Lift effect on hover */
+    background-color: #3d9b3e;
+    transform: scale(1.05);
 }
 
 .task-assignment-form button:active {
-    background-color: #367e3a; /* Even darker green when clicked */
-    transform: translateY(0); /* Reset lift effect */
+    background-color: #357a34;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Checkbox Styling */
+.volunteer-card input[type="checkbox"] {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    width: 18px;
+    height: 18px;
+    accent-color: #4CAF50;
+    cursor: pointer;
+    transform: scale(1.2);
+}
+
+.attach-resource-button {
+    background-color: #009688;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-weight: 600;
+}
+
+.attach-resource-button:hover {
+    background-color: #00796b;
+}
+
+.attach-resource-button.active {
+    background-color: #d32f2f;
+    color: #fff;
 }

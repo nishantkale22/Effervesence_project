@@ -47,7 +47,6 @@ const Volunteers = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Ensure at least one volunteer is selected
     if (selectedVolunteers.length === 0) {
       alert('Please select at least one volunteer.');
       return;
@@ -57,7 +56,7 @@ const Volunteers = () => {
       id: { _id },
       task: { ...taskDetails },
       assignedTo: selectedVolunteers,
-      resource: attachResource ? { ...resourceDetails } : {} // Include resource only if attached
+      resource: attachResource ? { ...resourceDetails } : {}
     };
 
     try {
@@ -95,10 +94,12 @@ const Volunteers = () => {
           <div key={volunteer._id} className="volunteer-card">
             <img src={volunteer.photo} alt={`${volunteer.name}'s profile`} className="volunteer-photo" />
             <h3>{volunteer.name}</h3>
-            <div className="volunteer-details">
-              <p>{volunteer.email}</p>
-              <p>{volunteer.phone}</p>
-            </div>
+            {/* <div className="volunteer-details">
+              <div className="contact-info">
+                <p>{volunteer.email}</p>
+                <p>{volunteer.phone}</p>
+              </div>
+            </div> */}
             {isAssigning && (
               <input
                 type="checkbox"

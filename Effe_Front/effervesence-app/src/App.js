@@ -17,6 +17,7 @@ const Volunteers = React.lazy(() => import('./components/noncore/Volunteers'));
 const Executives = React.lazy(() => import('./components/noncore/Executives'));
 const Allocations = React.lazy(() => import('./components/Allocations'));
 const TaskDetails = React.lazy(() => import('./components/TaskDetails'));
+const AllocationDetails = React.lazy(() => import('./components/AllocationDetails'));
 
 
 
@@ -41,6 +42,8 @@ function App() {
         <Route path="/user/taskdetails/:_id" element={<TaskDetails />} />
 
         <Route path="/user/allocations/:_id" element={<Allocations />} />
+        <Route path="/user/allocationdetails/:_id" element={<AllocationDetails />} />
+
         <Route path="/user/notifications/:_id" element={<Notifications />} />
         <Route path="/user/:_id/:department/volunteers" element={<Volunteers />} />
         <Route path="/user/:_id/:department/executives" element={<Executives />} />

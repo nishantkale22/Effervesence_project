@@ -3,11 +3,11 @@ import { useParams, useLocation } from 'react-router-dom';
 import axiosInstance from '../api/axiosInstance';
 import '../styles/taskDetails.css';
 
-const TaskDetails = () => {
+const AllocationDetails = () => {
     const { _id } = useParams();
+    // console.log(_id);
     const location = useLocation();
     const user_id = location.state?.user_id;
-    console.log(user_id) ;
 
     const [task, setTask] = useState(null);
     const [assignedUsers, setAssignedUsers] = useState([]);
@@ -15,11 +15,9 @@ const TaskDetails = () => {
     const [error, setError] = useState('');
     const [newResource, setNewResource] = useState({ title: '', description: '', fileType: '', fileUrl: '' });
     const [showUploadForm, setShowUploadForm] = useState(false);
-    const [showRequestForm, setShowRequestForm] = useState(false);
-    const [resourceRequest, setResourceRequest] = useState({ title: '', description: '' });
 
     useEffect(() => {
-        const fetchTaskDetails = async () => {
+        const fetchAllocationDetails = async () => {
             try {
                 const { data } = await axiosInstance.get(
                     `/user/taskdetails/${_id}`,
@@ -35,7 +33,7 @@ const TaskDetails = () => {
             }
         };
 
-        fetchTaskDetails();
+        fetchAllocationDetails();
     }, [_id]);
 
     const handleResourceUpload = async (e) => {
@@ -56,36 +54,6 @@ const TaskDetails = () => {
             console.error(err);
         }
     };
-    const handleResourceRequest = async (e) => {
-        e.preventDefault();
-        try {
-            const requestPayload = {
-                _id, 
-                resourceRequest: {
-                    title: resourceRequest.title, 
-                    description: resourceRequest.description
-                },
-                user_id
-            };
-    
-            // Send the resource request to the server
-            await axiosInstance.post(
-                `/request/resources`, 
-                requestPayload,
-                { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` } }
-            );
-    
-            // Reset form fields after successful submission
-            setResourceRequest({ title: '', description: '' });
-            setShowRequestForm(false);
-            setError('');
-        } catch (err) {
-            // Display error message on failure
-            setError('Failed to submit resource request.');
-            console.error(err);
-        }
-    };
-    
 
     const renderTooltip = (user) => (
         <span className="tooltip-text">
@@ -152,7 +120,7 @@ const TaskDetails = () => {
                 )}
 
                 <button onClick={() => setShowUploadForm(!showUploadForm)}>
-                    {showUploadForm ? 'Cancel Upload' : 'Upload Resource'}
+                    {showUploadForm ? 'Cancel Upload' : 'Add Resource'}
                 </button>
                 {showUploadForm && (
                     <form onSubmit={handleResourceUpload} className="resource-upload-form">
@@ -189,33 +157,7 @@ const TaskDetails = () => {
                             onChange={(e) => setNewResource({ ...newResource, fileUrl: e.target.value })}
                             required
                         />
-                        <button type="submit">Upload Resource</button>
-                    </form>
-                )}
-            </div>
-
-            <div className="resource-request-box">
-                <h3>Request Resource</h3>
-                <button onClick={() => setShowRequestForm(!showRequestForm)}>
-                    {showRequestForm ? 'Cancel Request' : 'Request Resource'}
-                </button>
-                {showRequestForm && (
-                    <form onSubmit={handleResourceRequest} className="resource-request-form">
-                        <input
-                            type="text"
-                            placeholder="Request Title"
-                            value={resourceRequest.title}
-                            onChange={(e) => setResourceRequest({ ...resourceRequest, title: e.target.value })}
-                            required
-                        />
-                        <input
-                            type="text"
-                            placeholder="Request Description"
-                            value={resourceRequest.description}
-                            onChange={(e) => setResourceRequest({ ...resourceRequest, description: e.target.value })}
-                            required
-                        />
-                        <button type="submit">Submit Request</button>
+                        <button type="submit">Add Resource</button>
                     </form>
                 )}
             </div>
@@ -225,4 +167,4 @@ const TaskDetails = () => {
     );
 };
 
-export default TaskDetails;
+export default AllocationDetails;
