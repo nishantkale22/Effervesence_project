@@ -10,10 +10,13 @@ const Notifications = () => {
     const { _id } = useParams();
     const [notifications, setNotifications] = useState([]);
     const [error, setError] = useState('');
+   
 
     useEffect(() => {
+        // Create the socket connection only once
         const socket = io('http://localhost:5000', { transports: ['websocket'] });
-
+        socket.emit('joinRoom', _id);  // Join the user-specific room
+        // Fetch notifications from the server
         const fetchNotifications = async () => {
             try {
                 const { data } = await axiosInstance.get(`/user/notifications/${_id}`, {
@@ -25,18 +28,23 @@ const Notifications = () => {
                 console.error(err);
             }
         };
-
         fetchNotifications();
 
+        // Listen for new notifications
         socket.on('receiveNotification', (newNotification) => {
+            console.log(newNotification) ;
             setNotifications((prevNotifications) => [newNotification, ...prevNotifications]);
         });
 
+     
+
+        // Cleanup on unmount
         return () => {
             socket.disconnect();
         };
-    }, [_id]);
+    }, [_id]); // Only re-run when _id changes, avoiding unnecessary re-renders
 
+    // Mark notification as read
     const handleMarkAsRead = async (notificationId) => {
         try {
             await axiosInstance.patch(`/user/notifications/${notificationId}/markAsRead`, {}, {
@@ -50,6 +58,7 @@ const Notifications = () => {
         }
     };
 
+    // Delete notification
     const handleDeleteNotification = async (notificationId) => {
         try {
             await axiosInstance.delete(`/user/notifications/${notificationId}`, {
