@@ -1,7 +1,10 @@
+
 const asyncHandler = require('express-async-handler');
 const Resource = require('../models/Resource');
 const Task = require('../models/Task');
 const User = require('../models/User');
+const Notification = require('../models/Notification');
+
 
 const postTaskWithResource = asyncHandler (async (req, res) => {
     try {
@@ -26,6 +29,11 @@ const postTaskWithResource = asyncHandler (async (req, res) => {
       console.log(newResource) ;
 
       }
+      const assigner = await User.findById(id) ;
+      if(!assigner){
+        return res.status(404).send('assigner not found');
+
+      } 
   
   
       // Fetch the users to whom the task is assigned
@@ -52,6 +60,19 @@ const postTaskWithResource = asyncHandler (async (req, res) => {
         { _id: { $in: assignedTo } },
         { $push: { tasks: newTask._id } }
       );
+
+
+
+      for(let assignedUser of assignedUsers){
+        const newNotification = new Notification({
+            userId: assignedUser._id ,
+            message: `task assigned to you by ${assigner.name}` 
+
+        }) ;
+        await newNotification.save() ;
+        
+      }
+
 
       res.status(200).send('Task assigned successfully');
       console.log(newTask) ;
