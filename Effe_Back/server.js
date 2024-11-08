@@ -9,6 +9,7 @@ const mongoose = require('mongoose');
 const connectDB = require('./config/dbConn');
 const { httpLogger } = require('./middleware/logger');
 const errorHandler = require('./middleware/errorHandler');
+const { setSocketIo } = require('./socket');
 
 // Setup environment and app
 const PORT = process.env.PORT || 5000;
@@ -33,10 +34,14 @@ const io = socketIo(server, {
         methods: ['GET', 'POST', 'PATCH', 'DELETE'],
     },
 });
+// // Set io instance to be used across the app
+// app.set('io', io);
+setSocketIo(io); // Set io globally
+
 
 // Pass io to routes needing real-time updates
 app.use('/', require('./routes/root'));
-app.use('/request', require('./routes/requestRoutes')(io)); // Routes with io dependency
+app.use('/request', require('./routes/requestRoutes')); // Routes with io dependency
 app.use('/auth', require('./routes/authRoutes'));
 app.use('/register', require('./routes/register'));
 app.use('/user', require('./routes/userRoutes')); // Dashboard redirection routes
@@ -66,11 +71,10 @@ io.on('connection', (socket) => {
         socket.join(userId);
     });
 
-    // Handle notification events
-    socket.on('sendNotification', (notification) => {
-        io.to(notification.userId).emit('receiveNotification', notification);
+    socket.on('receiveNotification', (newNotification) => {
+        // Emit to the specific room when a notification is sent
+        io.to(newNotification.userId).emit('receiveNotification', newNotification);
     });
-
     socket.on('sendCount', (notification) => {
         io.to(notification.userId).emit('unreadCount');
     });

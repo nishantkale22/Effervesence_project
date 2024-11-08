@@ -4,10 +4,11 @@ const Resource = require('../models/Resource');
 const Task = require('../models/Task');
 const User = require('../models/User');
 const Notification = require('../models/Notification');
-
+const { getSocketIo } = require('../socket');
 
 const postTaskWithResource = asyncHandler (async (req, res) => {
     try {
+        const io = getSocketIo(); // Get the shared io instance
       const { id,task,assignedTo,resource} = req.body;
   
       // Validate required fields
@@ -70,7 +71,11 @@ const postTaskWithResource = asyncHandler (async (req, res) => {
 
         }) ;
         await newNotification.save() ;
-        
+
+                // Emit the notification to the specific user
+                io.to(assignedUser._id.toString()).emit('receiveNotification', newNotification);
+                io.to(assignedUser._id.toString()).emit('unreadCount');
+
       }
 
 

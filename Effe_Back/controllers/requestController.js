@@ -3,9 +3,12 @@ const Resource = require('../models/Resource');
 const Task = require('../models/Task');
 const User = require('../models/User');
 const Notification = require('../models/Notification');
+const { getSocketIo } = require('../socket');
 
-const sendNotification = (io) => asyncHandler(async (req, res) => {
+
+const sendNotification = asyncHandler(async (req, res) => {
     try {
+        const io = getSocketIo(); // Get the shared io instance
         const payload = req.body;
 
         // Find the task and the requesting user
@@ -33,8 +36,11 @@ const sendNotification = (io) => asyncHandler(async (req, res) => {
         await newNotification.save();
 
         // Emit the notification to the specific user
-        io.to(task.assignedBy._id.toString()).emit('receiveNotification', newNotification);
-        io.to(task.assignedBy._id.toString()).emit('unreadCount');
+       
+            io.to(task.assignedBy._id.toString()).emit('receiveNotification', newNotification);
+            io.to(task.assignedBy._id.toString()).emit('unreadCount');
+    
+        
 
         
         // Send a response to the client
@@ -46,6 +52,6 @@ const sendNotification = (io) => asyncHandler(async (req, res) => {
     }
 });
 
-module.exports = (io) => ({
-    sendNotification: sendNotification(io),
-});
+module.exports = {
+    sendNotification,
+};

@@ -3,9 +3,8 @@ const router = express.Router();
 const verifyJWT = require('../middleware/verifyJWT');
 const requestController = require('../controllers/requestController');
 
-// Modify this to use the passed io
-module.exports = (io) => {
-    router.post('/resources', verifyJWT, requestController(io).sendNotification);
+router.post('/resources', verifyJWT, requestController.sendNotification);
 
-    return router;
-};
+
+module.exports = router;
+
