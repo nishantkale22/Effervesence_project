@@ -48,7 +48,7 @@ function App() {
         <Route path="/user/:_id/:department/volunteers" element={<Volunteers />} />
         <Route path="/user/:_id/:department/executives" element={<Executives />} />
 
-
+``
       </Routes>
     </Suspense>
   );

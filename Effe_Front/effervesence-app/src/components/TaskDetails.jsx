@@ -2,12 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import axiosInstance from '../api/axiosInstance';
 import '../styles/taskDetails.css';
+// import { io } from 'socket.io-client';
+
 
 const TaskDetails = () => {
     const { _id } = useParams();
     const location = useLocation();
     const user_id = location.state?.user_id;
-    console.log(user_id) ;
+    // console.log(user_id) ;
+    // const socket = io('http://localhost:5000', { transports: ['websocket'] });
+
 
     const [task, setTask] = useState(null);
     const [assignedUsers, setAssignedUsers] = useState([]);
@@ -183,7 +187,7 @@ const TaskDetails = () => {
                             <option value="csv">CSV</option>
                         </select>
                         <input
-                            type="url"
+                            type="file"
                             placeholder="File URL"
                             value={newResource.fileUrl}
                             onChange={(e) => setNewResource({ ...newResource, fileUrl: e.target.value })}

@@ -67,11 +67,13 @@ const Volunteers = () => {
       setIsAssigning(false);
       setTaskDetails({ title: '', description: '' });
       setResourceDetails({ title: '', description: '', fileType: '', fileUrl: '' });
+      
       setSelectedVolunteers([]);
       setAttachResource(false);
     } catch (error) {
       console.error('Failed to assign task and resource:', error);
     }
+
   };
 
   return (

@@ -28,7 +28,7 @@ const Tasks = () => {
 
     // Function to handle navigation to task details page
     const handleTaskDetails = (taskId) => {
-        console.log(_id)
+        // console.log(_id)
         navigate(`/user/taskdetails/${taskId}`,{ state: { user_id: _id } })
     };
 

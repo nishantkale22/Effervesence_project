@@ -1,18 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, NavLink, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBell } from '@fortawesome/free-solid-svg-icons'; // Import bell icon
+import { faBell } from '@fortawesome/free-solid-svg-icons';
 import axiosInstance from '../../api/axiosInstance';
 import '../../styles/dashboard.css';
+import { io } from 'socket.io-client';
 
 const NonCoreDashboard = () => {
     const { role, department, _id } = useParams();
     const [user, setUser] = useState(null);
     const [error, setError] = useState('');
-    const [unreadCount, setUnreadCount] = useState(0); // For unread notifications count
+    const [unreadCount, setUnreadCount] = useState(0);
     const navigate = useNavigate();
 
     useEffect(() => {
+        const socket = io('http://localhost:5000', { transports: ['websocket'] });
+        socket.emit('joinRoom', _id);  // Join the user-specific room
+
         const fetchUserData = async () => {
             try {
                 const { data } = await axiosInstance.get(
@@ -26,20 +30,25 @@ const NonCoreDashboard = () => {
             }
         };
 
-        // Fetch unread notifications count
         const fetchUnreadNotifications = async () => {
             try {
                 const { data } = await axiosInstance.get(`/user/notifications/${_id}`);
-              
-                setUnreadCount(data.unreadNotifications.length); // Set the unread notifications count
+                setUnreadCount(data.unreadNotifications.length);
             } catch (err) {
                 console.error('Failed to fetch unread notifications count:', err);
             }
         };
-        
 
         fetchUserData();
-        fetchUnreadNotifications(); // Call to get unread notifications count
+        fetchUnreadNotifications();
+
+        socket.on('unreadCount', () => {
+            setUnreadCount(prevCount => prevCount + 1);
+        });
+
+        return () => {
+            socket.disconnect();
+        };
     }, [role, department, _id]);
 
     const handleLogout = async () => {
@@ -86,8 +95,6 @@ const NonCoreDashboard = () => {
             <nav className="navbar">
                 <NavLink to={`/user/profile/${_id}`} activeClassName="active">Profile</NavLink>
                 <NavLink to={`/user/tasks/${_id}`} activeClassName="active">Tasks</NavLink>
-
-                {/* Bell icon with unread notification count */}
                 <NavLink to={`/user/notifications/${_id}`} activeClassName="active">
                     <div className="notification-icon">
                         <FontAwesomeIcon icon={faBell} />
@@ -96,7 +103,6 @@ const NonCoreDashboard = () => {
                         )}
                     </div>
                 </NavLink>
-
                 {renderNavLinks()}
                 <button onClick={handleLogout} className="logout-button">Logout</button>
             </nav>

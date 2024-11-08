@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, NavLink, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBell, faCheckCircle, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { faCheckCircle, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import axiosInstance from '../api/axiosInstance';
 import '../styles/notifications.css';
+import { io } from 'socket.io-client';
 
 const Notifications = () => {
     const { _id } = useParams();
@@ -11,12 +12,14 @@ const Notifications = () => {
     const [error, setError] = useState('');
 
     useEffect(() => {
+        const socket = io('http://localhost:5000', { transports: ['websocket'] });
+
         const fetchNotifications = async () => {
             try {
                 const { data } = await axiosInstance.get(`/user/notifications/${_id}`, {
-                    headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+                    headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
                 });
-                setNotifications(data.allNotifications); // Correct property name
+                setNotifications(data.allNotifications);
             } catch (err) {
                 setError('Failed to fetch notifications.');
                 console.error(err);
@@ -24,6 +27,14 @@ const Notifications = () => {
         };
 
         fetchNotifications();
+
+        socket.on('receiveNotification', (newNotification) => {
+            setNotifications((prevNotifications) => [newNotification, ...prevNotifications]);
+        });
+
+        return () => {
+            socket.disconnect();
+        };
     }, [_id]);
 
     const handleMarkAsRead = async (notificationId) => {
