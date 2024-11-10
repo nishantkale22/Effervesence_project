@@ -31,6 +31,22 @@ const Allocations = () => {
         navigate(`/user/allocationdetails/${allocationId}`); // Update the navigation path
     };
 
+
+    const handleDeleteAllocation = async (allocationId) => {
+        try {
+            console.log(allocationId) ;
+            await axiosInstance.delete(
+                `/user/allocations/${allocationId}`, // Update the endpoint to /user/allocations
+                { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` } }
+            );
+            setAllocations((prev) => prev.filter((allocation) => allocation._id !== allocationId));
+        } catch (err) {
+            setError('Failed to delete allocations.');
+            console.error(err); // For debugging
+        }
+
+
+    }
     return (
         <div className="tasks-container">
             <h2>Your Allocations</h2>
@@ -48,6 +64,14 @@ const Allocations = () => {
                         >
                             View Details
                         </button>
+
+                        <button 
+                            onClick={() => handleDeleteAllocation(allocation._id)} 
+                            className="details-button"
+                        >
+                           Delete
+                        </button>
+
                     </div>
                 ))
             ) : (

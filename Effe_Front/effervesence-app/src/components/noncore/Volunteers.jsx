@@ -53,7 +53,7 @@ const Volunteers = () => {
     }
 
     const payload = {
-      id: { _id },
+      id:  _id ,
       task: { ...taskDetails },
       assignedTo: selectedVolunteers,
       resource: attachResource ? { ...resourceDetails } : {}
