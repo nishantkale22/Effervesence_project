@@ -139,9 +139,9 @@ const getUserAllocations = asyncHandler(async (req, res) => {
 
         const Tasks = await Task.find({ assignedBy: _id });
 
-        if (Tasks.length === 0) {
-            return res.status(404).json({ message: 'No tasks found' });
-        }
+        // if (Tasks.length === 0) {
+        //     return res.status(404).json({ message: 'No tasks found' });
+        // }
 
         res.json({ Tasks });
     } catch (error) {

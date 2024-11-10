@@ -10,7 +10,7 @@ const postTaskWithResource = asyncHandler (async (req, res) => {
     try {
         const io = getSocketIo(); // Get the shared io instance
       const { id,task,assignedTo,resource} = req.body;
-  
+      console.log(id) ;
       // Validate required fields
       if (!task || !assignedTo || !id) {
         return res.status(400).send('Missing required fields');
@@ -27,7 +27,7 @@ const postTaskWithResource = asyncHandler (async (req, res) => {
           uploadedBy: id,
         });
         await newResource.save(); // Save resource to MongoDB
-      console.log(newResource) ;
+      // console.log(newResource) ;
 
       }
       const assigner = await User.findById(id) ;
@@ -35,6 +35,7 @@ const postTaskWithResource = asyncHandler (async (req, res) => {
         return res.status(404).send('assigner not found');
 
       } 
+      console.log(assigner.name ) ;
   
   
       // Fetch the users to whom the task is assigned
@@ -80,7 +81,7 @@ const postTaskWithResource = asyncHandler (async (req, res) => {
 
 
       res.status(200).send('Task assigned successfully');
-      console.log(newTask) ;
+      // console.log(newTask) ;
     } catch (error) {
       console.error('Error in assigning task:', error);
       res.status(500).send('Task assignment failed');
@@ -173,9 +174,32 @@ const getTaskByID = asyncHandler(async (req, res) => {
   }
 });
 
+const deleteAllocationById = asyncHandler(async (req, res) => {
+  try {
+    const { allocationId } = req.params;
+    console.log(allocationId) 
+    if (!allocationId || allocationId === 'undefined') {
+      return res.status(400).json({ message: 'Invalid Allocation task ID' });
+    }
+
+    const task = await Task.findByIdAndDelete(allocationId) ;
+    res.json({message : 'Allocation deleted successfully'}) ;
+    
+    
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+
+
+
   module.exports = {
     getTaskByID,
     postTaskWithResource,
     getTaskResources,
     postTaskResource,
+    deleteAllocationById,
 };
