@@ -1,52 +1,69 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom'; // useNavigate for navigation
+import { useParams, useNavigate } from 'react-router-dom';
 import axiosInstance from '../api/axiosInstance'; 
-import '../styles/tasks.css'; // Update the CSS file if necessary
+import '../styles/allocations.css';
 
 const Allocations = () => {
-    const { _id } = useParams(); // Extract user ID from route parameters
+    const { _id } = useParams();
     const [allocations, setAllocations] = useState([]);
     const [error, setError] = useState('');
-    const navigate = useNavigate(); // For programmatic navigation
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchAllocations = async () => {
             try {
                 const { data } = await axiosInstance.get(
-                    `/user/allocations/${_id}`, // Update the endpoint to /user/allocations
+                    `/user/allocations/${_id}`,
                     { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` } }
                 );
-                setAllocations(data.Tasks); // Set the fetched allocations
+                setAllocations(data.Tasks);
             } catch (err) {
                 setError('Failed to fetch allocations.');
-                console.error(err); // For debugging
+                console.error(err);
             }
         };
 
         fetchAllocations();
     }, [_id]);
 
-    // Function to handle navigation to allocation details page
     const handleAllocationDetails = (allocationId) => {
-        navigate(`/user/allocationdetails/${allocationId}`); // Update the navigation path
+        navigate(`/user/allocationdetails/${allocationId}`);
     };
-
 
     const handleDeleteAllocation = async (allocationId) => {
         try {
-            console.log(allocationId) ;
             await axiosInstance.delete(
-                `/user/allocations/${allocationId}`, // Update the endpoint to /user/allocations
+                `/user/allocations/${allocationId}`,
                 { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` } }
             );
             setAllocations((prev) => prev.filter((allocation) => allocation._id !== allocationId));
         } catch (err) {
-            setError('Failed to delete allocations.');
-            console.error(err); // For debugging
+            setError('Failed to delete allocation.');
+            console.error(err);
         }
+    };
 
+    const handleMarkAsComplete = async (allocationId) => {
+        try {
+            await axiosInstance.post(
+                `/user/allocations/status/${allocationId}`,
+                {},
+                { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` } }
+            );
+            // Update the state to mark the allocation as complete
+            setAllocations((prev) =>
+                prev.map((allocation) =>
+                    allocation._id === allocationId
+                        ? { ...allocation, taskStatus: 'complete' }
+                        : allocation
+                )
+            );
+        } catch (err) {
+            setError('Failed to mark allocation as complete.');
+            console.error(err);
+        }
+    };
 
-    }
     return (
         <div className="tasks-container">
             <h2>Your Allocations</h2>
@@ -55,23 +72,30 @@ const Allocations = () => {
                 <p>{error}</p>
             ) : allocations.length > 0 ? (
                 allocations.map((allocation) => (
-                    <div key={allocation._id} className="task-card"> {/* Change class name if needed */}
-                        <h3>{allocation.title}</h3> {/* Assuming allocation has a title */}
-                        <p>{allocation.description}</p> {/* Assuming allocation has a description */}
-                        <button 
-                            onClick={() => handleAllocationDetails(allocation._id)} 
+                    <div key={allocation._id} className="task-card">
+                        <h3>{allocation.title}</h3>
+                        <p>{allocation.description}</p>
+                        <button
+                            onClick={() => handleAllocationDetails(allocation._id)}
                             className="details-button"
                         >
                             View Details
                         </button>
 
-                        <button 
-                            onClick={() => handleDeleteAllocation(allocation._id)} 
+                        <button
+                            onClick={() => handleDeleteAllocation(allocation._id)}
                             className="details-button"
                         >
-                           Delete
+                            Delete
                         </button>
 
+                        <button
+                            onClick={() => handleMarkAsComplete(allocation._id)}
+                            className="details-button"
+                            disabled={allocation.taskStatus === 'complete'}
+                        >
+                            {allocation.taskStatus === 'complete' ? 'Marked Completed' : 'Mark As Complete'}
+                        </button>
                     </div>
                 ))
             ) : (

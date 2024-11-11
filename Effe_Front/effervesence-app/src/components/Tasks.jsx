@@ -43,6 +43,7 @@ const Tasks = () => {
                     <div key={task._id} className="task-card">
                         <h3>{task.title}</h3> {/* Assuming task has a title */}
                         <p>{task.description}</p> {/* Assuming task has a description */}
+                        <p>{task.taskStatus}</p>
                         <button 
                             onClick={() => handleTaskDetails(task._id)} 
                             className="details-button"
