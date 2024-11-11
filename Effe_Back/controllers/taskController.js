@@ -194,6 +194,27 @@ const deleteAllocationById = asyncHandler(async (req, res) => {
 });
 
 
+const updateAllocationStatusById = asyncHandler(async (req, res) => {
+  try {
+    const { allocationId } = req.params;
+    console.log(allocationId) 
+    if (!allocationId || allocationId === 'undefined') {
+      return res.status(400).json({ message: 'Invalid Allocation task ID' });
+    }
+
+    const task = await Task.findByIdAndUpdate(allocationId,{
+      taskStatus : 'complete' ,
+    }) ;
+    res.json({message : 'Allocation updated successfully'}) ;
+    
+    
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 
 
   module.exports = {
@@ -202,4 +223,5 @@ const deleteAllocationById = asyncHandler(async (req, res) => {
     getTaskResources,
     postTaskResource,
     deleteAllocationById,
+    updateAllocationStatusById,
 };

@@ -17,20 +17,25 @@ const taskSchema = new Schema({
   resources: [
     {
       type: Schema.Types.ObjectId,
-      ref: 'Resource', // Reference to resource objects
+      ref: 'Resource',
     },
   ],
   assignedBy: {
     type: Schema.Types.ObjectId,
-    ref: 'User', // Reference to the user who assigned the task
+    ref: 'User',
     required: true,
   },
   assignedTo: [
     {
       type: Schema.Types.ObjectId,
-      ref: 'User', // Reference to users assigned to this task
+      ref: 'User',
     },
   ],
+  taskStatus: {
+    type: String,
+    enum: ['incomplete', 'complete'],
+    default: 'incomplete',
+  },
   createdAt: {
     type: Date,
     default: Date.now,

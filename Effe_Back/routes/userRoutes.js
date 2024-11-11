@@ -18,6 +18,9 @@ router.get('/tasks/:_id', verifyJWT, userController.getUserTasks);
 
 router.get('/allocations/:_id',verifyJWT,  userController.getUserAllocations);
 
+router.post('/allocations/status/:allocationId', taskController.updateAllocationStatusById  );
+
+
 router.delete('/allocations/:allocationId', verifyJWT, taskController.deleteAllocationById);
 
 router.get('/taskdetails/:_id',taskController.getTaskByID )
