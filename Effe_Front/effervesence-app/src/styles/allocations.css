@@ -1,0 +1,93 @@
+/* Container for the entire tasks section */
+.tasks-container {
+    width: 85%;
+    margin: 0 auto;
+    padding: 30px;
+    text-align: center;
+    background-color: #eef2f5; /* Slightly lighter background for a softer look */
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    font-family: 'Arial', sans-serif;
+}
+
+/* Task card styling */
+.task-card {
+    background-color: #ffffff;
+    margin: 20px 0;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    text-align: left;
+    border-left: 5px solid #007bff; /* Highlighting the left border */
+}
+
+/* Hover effect for task card */
+.task-card:hover {
+    transform: translateY(-7px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Task title styling */
+.task-card h3 {
+    margin: 0 0 12px 0;
+    color: #2c3e50;
+    font-size: 1.6rem;
+    font-weight: bold;
+}
+
+/* Task description styling */
+.task-card p {
+    color: #5a6473;
+    font-size: 1rem;
+    margin-bottom: 20px;
+}
+
+/* Button for task actions */
+.details-button {
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin: 0 5px; /* Space between buttons */
+    transition: background-color 0.2s ease-in-out, transform 0.2s ease;
+}
+
+/* Hover and active effect for buttons */
+.details-button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+.details-button:disabled {
+    background-color: #6c757d; /* Grey color for disabled state */
+    cursor: not-allowed;
+}
+
+/* Handling no tasks message */
+.tasks-container p {
+    font-size: 1.2rem;
+    color: #6c757d;
+    margin-top: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .tasks-container {
+        width: 95%;
+        padding: 20px;
+    }
+
+    .task-card {
+        padding: 15px;
+    }
+
+    .details-button {
+        padding: 8px 15px;
+        font-size: 0.9rem;
+    }
+}

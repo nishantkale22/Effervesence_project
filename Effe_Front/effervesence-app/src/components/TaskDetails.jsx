@@ -207,7 +207,7 @@ const TaskDetails = () => {
                     <ul>
                         {resources.map((resource) => (
                             <li key={resource._id}>
-                                <p>{resource.title} - {resource.description}</p>
+                                <p> <a href={resource.fileUrl}>{resource.title}</a>  - {resource.description}</p>
                                 <button onClick={() => handleDownload(resource.fileUrl, resource.title)}>Download File</button>
                             </li>
                         ))}

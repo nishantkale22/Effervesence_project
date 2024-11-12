@@ -5,7 +5,6 @@ import '../styles/taskDetails.css';
 
 const AllocationDetails = () => {
     const { _id } = useParams();
-    // console.log(_id);
     const location = useLocation();
     const user_id = location.state?.user_id;
 
@@ -38,14 +37,19 @@ const AllocationDetails = () => {
 
     const handleResourceUpload = async (e) => {
         e.preventDefault();
+        if (!newResource.fileUrl) {
+            alert('Please upload a file first.');
+            return;
+        }
+
         try {
             const { data } = await axiosInstance.post(
-                `/resources/upload`,
-                { _id, resource: newResource },
+                `/resource/post`,
+                { user_id, _id, resource: newResource },
                 { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` } }
             );
 
-            setResources([...resources, data.resource]);
+            setResources([...resources, data.newResource]);
             setNewResource({ title: '', description: '', fileType: '', fileUrl: '' });
             setShowUploadForm(false);
             setError('');
@@ -54,8 +58,8 @@ const AllocationDetails = () => {
             console.error(err);
         }
     };
-    const handleDeleteResource = async (resourceId) =>{
 
+    const handleDeleteResource = async (resourceId) => {
         try {
             await axiosInstance.delete(
                 `/resource/${resourceId}/delete`,
@@ -63,20 +67,59 @@ const AllocationDetails = () => {
             );
             setResources((prev) => prev.filter((resource) => resource._id !== resourceId));
         } catch (err) {
-            setError('Failed to delete allocation.');
+            setError('Failed to delete resource.');
             console.error(err);
         }
-
-
-
     };
 
-    const renderTooltip = (user) => (
-        <span className="tooltip-text">
-            <strong>Contact:</strong> {user.phone || 'N/A'} <br />
-            <strong>Email:</strong> {user.email || 'N/A'}
-        </span>
-    );
+    const handleFileUpload = async () => {
+        if (!newResource.selectedFile) {
+            alert('Please select a file before uploading.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', newResource.selectedFile);
+
+        try {
+            const { data } = await axiosInstance.post('/resource/upload', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            });
+
+            if (!data.fileUrl) {
+                throw new Error("File upload failed, URL not received.");
+            }
+
+            setNewResource({ ...newResource, fileUrl: data.fileUrl });
+            alert('File uploaded successfully!');
+        } catch (error) {
+            console.error('File upload error:', error);
+            alert('Failed to upload the file.');
+        }
+    };
+
+    const handleDownload = async (fileUrl, filename) => {
+        try {
+            const response = await fetch(fileUrl, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/octet-stream',
+                },
+            });
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', filename || 'downloaded_file');
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Download error:', error);
+        }
+    };
 
     return (
         <div className="task-details-container">
@@ -87,13 +130,7 @@ const AllocationDetails = () => {
                         <p><strong>Title:</strong> {task.title}</p>
                         <p><strong>Description:</strong> {task.description}</p>
                         <p><strong>Deadline:</strong> {task.deadline || 'N/A'}</p>
-                        <p>
-                            <strong>Assigned By:</strong>{' '}
-                            <span className="tooltip">
-                                {task.assignedBy?.name || 'N/A'}
-                                {task.assignedBy && renderTooltip(task.assignedBy)}
-                            </span>
-                        </p>
+                        <p><strong>Assigned By:</strong> {task.assignedBy?.name || 'N/A'}</p>
                         <p><strong>Created At:</strong> {new Date(task.createdAt).toLocaleString()}</p>
                     </>
                 ) : (
@@ -106,12 +143,7 @@ const AllocationDetails = () => {
                 {assignedUsers.length > 0 ? (
                     <ul>
                         {assignedUsers.map((user) => (
-                            <li key={user._id}>
-                                <span className="tooltip">
-                                    {user.name}
-                                    {renderTooltip(user)}
-                                </span>
-                            </li>
+                            <li key={user._id}>{user.name}</li>
                         ))}
                     </ul>
                 ) : (
@@ -125,15 +157,9 @@ const AllocationDetails = () => {
                     <ul>
                         {resources.map((resource) => (
                             <li key={resource._id}>
-                                <a href={resource.fileUrl} target="_blank" rel="noopener noreferrer">
-                                    {resource.title}
-                                </a> - {resource.description}
-                                <button 
-                            onClick={() => handleDeleteResource(resource._id)} 
-                            className="details-button"
-                        >
-                            Delete 
-                        </button>
+                                <p> <a href={resource.fileUrl}>{resource.title}</a>  - {resource.description}</p>
+                                <button onClick={() => handleDownload(resource.fileUrl, resource.title)}>Download File</button>
+                                <button onClick={() => handleDeleteResource(resource._id)} className="details-button">Delete</button>
                             </li>
                         ))}
                     </ul>
@@ -142,44 +168,49 @@ const AllocationDetails = () => {
                 )}
 
                 <button onClick={() => setShowUploadForm(!showUploadForm)}>
-                    {showUploadForm ? 'Cancel Upload' : 'Add Resource'}
+                    {showUploadForm ? 'Cancel Upload' : 'Upload Resource'}
                 </button>
                 {showUploadForm && (
                     <form onSubmit={handleResourceUpload} className="resource-upload-form">
-                        <input
-                            type="text"
-                            placeholder="Resource Title"
-                            value={newResource.title}
-                            onChange={(e) => setNewResource({ ...newResource, title: e.target.value })}
-                            required
-                        />
-                        <input
-                            type="text"
-                            placeholder="Resource Description"
-                            value={newResource.description}
-                            onChange={(e) => setNewResource({ ...newResource, description: e.target.value })}
-                            required
-                        />
-                        <select
-                            value={newResource.fileType}
-                            onChange={(e) => setNewResource({ ...newResource, fileType: e.target.value })}
-                            required
-                        >
-                            <option value="">Select File Type</option>
-                            <option value="image">Image</option>
-                            <option value="pdf">PDF</option>
-                            <option value="doc">Doc</option>
-                            <option value="excel">Excel</option>
-                            <option value="csv">CSV</option>
-                        </select>
-                        <input
-                            type="url"
-                            placeholder="File URL"
-                            value={newResource.fileUrl}
-                            onChange={(e) => setNewResource({ ...newResource, fileUrl: e.target.value })}
-                            required
-                        />
-                        <button type="submit">Add Resource</button>
+                        <div className="form-section">
+                            <h3>Resource Details</h3>
+                            <input
+                                type="text"
+                                value={newResource.title}
+                                onChange={(e) => setNewResource({ ...newResource, title: e.target.value })}
+                                placeholder="Resource Title"
+                                required
+                            />
+                            <textarea
+                                value={newResource.description}
+                                onChange={(e) => setNewResource({ ...newResource, description: e.target.value })}
+                                placeholder="Resource Description"
+                                required
+                            />
+                            <select
+                                value={newResource.fileType}
+                                onChange={(e) => setNewResource({ ...newResource, fileType: e.target.value })}
+                                required
+                            >
+                                <option value="">Select File Type</option>
+                                <option value="image">Image</option>
+                                <option value="pdf">PDF</option>
+                                <option value="doc">Document</option>
+                                <option value="excel">Excel</option>
+                                <option value="csv">CSV</option>
+                            </select>
+                            <input
+                                type="file"
+                                accept=".jpg,.jpeg,.png,.pdf,.doc,.xls,.xlsx,.csv"
+                                onChange={(e) => setNewResource({ ...newResource, selectedFile: e.target.files[0] })}
+                                required
+                            />
+                            <button type="button" onClick={handleFileUpload}>Upload File</button>
+                            {newResource.fileUrl && (
+                                <p>Uploaded file: <a href={newResource.fileUrl} target="_blank" rel="noopener noreferrer">View File</a></p>
+                            )}
+                        </div>
+                        <button type="submit">Upload Resource</button>
                     </form>
                 )}
             </div>

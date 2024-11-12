@@ -27,7 +27,7 @@ const Allocations = () => {
     }, [_id]);
 
     const handleAllocationDetails = (allocationId) => {
-        navigate(`/user/allocationdetails/${allocationId}`);
+        navigate(`/user/allocationdetails/${allocationId}`,{ state: { user_id: _id } });
     };
 
     const handleDeleteAllocation = async (allocationId) => {
