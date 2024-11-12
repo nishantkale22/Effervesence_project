@@ -39,6 +39,8 @@ const io = socketIo(server, {
 setSocketIo(io); // Set io globally
 
 
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // Pass io to routes needing real-time updates
 app.use('/', require('./routes/root'));
 app.use('/request', require('./routes/requestRoutes')); // Routes with io dependency
@@ -46,6 +48,8 @@ app.use('/auth', require('./routes/authRoutes'));
 app.use('/register', require('./routes/register'));
 app.use('/user', require('./routes/userRoutes')); // Dashboard redirection routes
 app.use('/task', require('./routes/taskRoutes'));
+app.use('/resource', require('./routes/resourceRoutes'));
+
 
 // 404 Not Found handler
 app.all('*', (req, res) => {
