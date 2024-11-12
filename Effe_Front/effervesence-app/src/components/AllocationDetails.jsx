@@ -54,6 +54,22 @@ const AllocationDetails = () => {
             console.error(err);
         }
     };
+    const handleDeleteResource = async (resourceId) =>{
+
+        try {
+            await axiosInstance.delete(
+                `/resource/${resourceId}/delete`,
+                { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` } }
+            );
+            setResources((prev) => prev.filter((resource) => resource._id !== resourceId));
+        } catch (err) {
+            setError('Failed to delete allocation.');
+            console.error(err);
+        }
+
+
+
+    };
 
     const renderTooltip = (user) => (
         <span className="tooltip-text">
@@ -112,6 +128,12 @@ const AllocationDetails = () => {
                                 <a href={resource.fileUrl} target="_blank" rel="noopener noreferrer">
                                     {resource.title}
                                 </a> - {resource.description}
+                                <button 
+                            onClick={() => handleDeleteResource(resource._id)} 
+                            className="details-button"
+                        >
+                            Delete 
+                        </button>
                             </li>
                         ))}
                     </ul>

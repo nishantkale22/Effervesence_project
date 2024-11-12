@@ -41,17 +41,21 @@ const TaskDetails = () => {
 
         fetchTaskDetails();
     }, [_id]);
-
     const handleResourceUpload = async (e) => {
         e.preventDefault();
+        if (!newResource.fileUrl) {
+            alert('Please upload a file first.');
+            return;
+        }
+    
         try {
             const { data } = await axiosInstance.post(
-                `/resources/upload`,
-                { _id, resource: newResource },
+                `/resource/post`,
+                { user_id, _id, resource: newResource },
                 { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` } }
             );
-
-            setResources([...resources, data.resource]);
+    
+            setResources([...resources, data.newResource]);
             setNewResource({ title: '', description: '', fileType: '', fileUrl: '' });
             setShowUploadForm(false);
             setError('');
@@ -60,6 +64,7 @@ const TaskDetails = () => {
             console.error(err);
         }
     };
+    
     const handleResourceRequest = async (e) => {
         e.preventDefault();
         try {
@@ -89,6 +94,35 @@ const TaskDetails = () => {
             console.error(err);
         }
     };
+    const handleFileUpload = async () => {
+        if (!newResource.selectedFile) {
+          alert('Please select a file before uploading.');
+          return;
+        }
+    
+        const formData = new FormData();
+        formData.append('file', newResource.selectedFile);
+    
+        try {
+          const { data } = await axiosInstance.post('/resource/upload', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+          });
+    
+          if (!data.fileUrl) {
+            throw new Error("File upload failed, URL not received.");
+          }
+    
+          setNewResource({
+            ...newResource,
+            fileUrl: data.fileUrl,
+          });
+    
+          alert('File uploaded successfully!');
+        } catch (error) {
+          console.error('File upload error:', error);
+          alert('Failed to upload the file.');
+        }
+    };
     
 
     const renderTooltip = (user) => (
@@ -97,6 +131,34 @@ const TaskDetails = () => {
             <strong>Email:</strong> {user.email || 'N/A'}
         </span>
     );
+
+ // Download function
+    const handleDownload = async (fileUrl, filename) => {
+        try {
+            const response = await fetch(fileUrl, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/octet-stream',
+                },
+            });
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            
+            // Create a temporary link to download the file
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', filename || 'downloaded_file');
+            document.body.appendChild(link);
+            link.click();
+            
+            // Clean up
+            link.parentNode.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Download error:', error);
+        }
+    };
+
 
     return (
         <div className="task-details-container">
@@ -145,9 +207,8 @@ const TaskDetails = () => {
                     <ul>
                         {resources.map((resource) => (
                             <li key={resource._id}>
-                                <a href={resource.fileUrl} target="_blank" rel="noopener noreferrer">
-                                    {resource.title}
-                                </a> - {resource.description}
+                                <p>{resource.title} - {resource.description}</p>
+                                <button onClick={() => handleDownload(resource.fileUrl, resource.title)}>Download File</button>
                             </li>
                         ))}
                     </ul>
@@ -160,39 +221,57 @@ const TaskDetails = () => {
                 </button>
                 {showUploadForm && (
                     <form onSubmit={handleResourceUpload} className="resource-upload-form">
-                        <input
-                            type="text"
-                            placeholder="Resource Title"
-                            value={newResource.title}
-                            onChange={(e) => setNewResource({ ...newResource, title: e.target.value })}
-                            required
-                        />
-                        <input
-                            type="text"
-                            placeholder="Resource Description"
-                            value={newResource.description}
-                            onChange={(e) => setNewResource({ ...newResource, description: e.target.value })}
-                            required
-                        />
-                        <select
-                            value={newResource.fileType}
-                            onChange={(e) => setNewResource({ ...newResource, fileType: e.target.value })}
-                            required
-                        >
-                            <option value="">Select File Type</option>
-                            <option value="image">Image</option>
-                            <option value="pdf">PDF</option>
-                            <option value="doc">Doc</option>
-                            <option value="excel">Excel</option>
-                            <option value="csv">CSV</option>
-                        </select>
-                        <input
-                            type="file"
-                            placeholder="File URL"
-                            value={newResource.fileUrl}
-                            onChange={(e) => setNewResource({ ...newResource, fileUrl: e.target.value })}
-                            required
-                        />
+                        <div className="form-section">
+    <h3>Resource Details</h3>
+    <input
+      type="text"
+      value={newResource.title}
+      onChange={(e) => setNewResource({ ...newResource, title: e.target.value })}
+      placeholder="Resource Title"
+      required
+    />
+    <textarea
+      value={newResource.description}
+      onChange={(e) => setNewResource({ ...newResource, description: e.target.value })}
+      placeholder="Resource Description"
+      required
+    />
+    <select
+      value={newResource.fileType}
+      onChange={(e) => setNewResource({ ...newResource, fileType: e.target.value })}
+      required
+    >
+      <option value="">Select File Type</option>
+      <option value="image">Image</option>
+      <option value="pdf">PDF</option>
+      <option value="doc">Document</option>
+      <option value="excel">Excel</option>
+      <option value="csv">CSV</option>
+    </select>
+
+    {/* File Input */}
+    <input
+      type="file"
+      id="fileInput"
+      accept=".jpg,.jpeg,.png,.pdf,.doc,.xls,.xlsx,.csv"
+      onChange={(e) => setNewResource({ ...newResource, selectedFile: e.target.files[0] })}
+      required
+    />
+
+    {/* Upload Button */}
+    <button type="button" onClick={handleFileUpload}>
+      Upload File
+    </button>
+
+    {/* Uploaded file display */}
+    {newResource.fileUrl && (
+      <p>
+        Uploaded file: <a href={newResource.fileUrl} target="_blank" rel="noopener noreferrer">View File</a>
+
+      </p>
+      
+    )}
+  </div>
                         <button type="submit">Upload Resource</button>
                     </form>
                 )}

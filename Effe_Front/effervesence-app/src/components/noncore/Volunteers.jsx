@@ -75,6 +75,33 @@ const Volunteers = () => {
     }
 
   };
+  const handleFileUpload = async () => {
+    if (!resourceDetails.selectedFile) {
+      alert('Please select a file before uploading.');
+      return;
+    }
+  
+    const formData = new FormData();
+    formData.append('file', resourceDetails.selectedFile);
+  
+    try {
+      const { data } = await axiosInstance.post('/resource/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+  
+      setResourceDetails({
+        ...resourceDetails,
+        fileUrl: data.fileUrl,
+      });
+  
+      alert('File uploaded successfully!');
+    } catch (error) {
+      console.error('File upload error:', error);
+      alert('Failed to upload the file.');
+    }
+  };
+  
+
 
   return (
     <div className="volunteers-container">
@@ -143,44 +170,60 @@ const Volunteers = () => {
           </button>
 
           {attachResource && (
-            <div className="form-section">
-              <h3>Resource Details</h3>
-              <input
-                type="text"
-                value={resourceDetails.title}
-                onChange={(e) => setResourceDetails({ ...resourceDetails, title: e.target.value })}
-                placeholder="Resource Title"
-                required
-              />
-              <textarea
-                value={resourceDetails.description}
-                onChange={(e) => setResourceDetails({ ...resourceDetails, description: e.target.value })}
-                placeholder="Resource Description"
-                required
-              />
-              <select
-                value={resourceDetails.fileType}
-                onChange={(e) => setResourceDetails({ ...resourceDetails, fileType: e.target.value })}
-                required
-              >
-                <option value="">Select File Type</option>
-                <option value="image">Image</option>
-                <option value="pdf">PDF</option>
-                <option value="doc">Document</option>
-                <option value="excel">Excel</option>
-                <option value="csv">CSV</option>
-              </select>
-              <input
-                type="text"
-                value={resourceDetails.fileUrl}
-                onChange={(e) => setResourceDetails({ ...resourceDetails, fileUrl: e.target.value })}
-                placeholder="Resource File URL"
-                required
-              />
-            </div>
-          )}
+  <div className="form-section">
+    <h3>Resource Details</h3>
+    <input
+      type="text"
+      value={resourceDetails.title}
+      onChange={(e) => setResourceDetails({ ...resourceDetails, title: e.target.value })}
+      placeholder="Resource Title"
+      required
+    />
+    <textarea
+      value={resourceDetails.description}
+      onChange={(e) => setResourceDetails({ ...resourceDetails, description: e.target.value })}
+      placeholder="Resource Description"
+      required
+    />
+    <select
+      value={resourceDetails.fileType}
+      onChange={(e) => setResourceDetails({ ...resourceDetails, fileType: e.target.value })}
+      required
+    >
+      <option value="">Select File Type</option>
+      <option value="image">Image</option>
+      <option value="pdf">PDF</option>
+      <option value="doc">Document</option>
+      <option value="excel">Excel</option>
+      <option value="csv">CSV</option>
+    </select>
 
-          <button type="submit">Submit Task and Resource</button>
+    {/* File Input */}
+    <input
+      type="file"
+      id="fileInput"
+      accept=".jpg,.jpeg,.png,.pdf,.doc,.xls,.xlsx,.csv"
+      onChange={(e) => setResourceDetails({ ...resourceDetails, selectedFile: e.target.files[0] })}
+      required
+    />
+
+    {/* Upload Button */}
+    <button type="button" onClick={handleFileUpload}>
+      Upload File
+    </button>
+
+    {/* Uploaded file display */}
+    {resourceDetails.fileUrl && (
+      <p>
+        Uploaded file: <a href={resourceDetails.fileUrl} target="_blank" rel="noopener noreferrer">View File</a>
+      </p>
+    )}
+  </div>
+)}
+
+
+
+          <button  type="submit">Submit Task and Resource</button>
         </form>
       )}
     </div>
