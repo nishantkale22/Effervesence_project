@@ -1,196 +1,164 @@
 // src/components/RegistrationForm.jsx
 import React, { useState } from 'react';
-import axios from 'axios'; // Import Axios
-import '../styles/registration.css'; // Ensure correct path to your CSS
+import axios from 'axios';
 
 const RegistrationForm = () => {
-    const [name, setName] = useState('');
-    const [photo, setPhoto] = useState('');
-    const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState('');
-    const [password, setPassword] = useState('');
-    const [userType, setUserType] = useState('');
-    const [role, setRole] = useState('');
-    const [department, setDepartment] = useState('none');
-    const [errorMessage, setErrorMessage] = useState('');
-    const [successMessage, setSuccessMessage] = useState('');
+  const [name, setName] = useState('');
+  const [photo, setPhoto] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
+  const [userType, setUserType] = useState('');
+  const [role, setRole] = useState('');
+  const [department, setDepartment] = useState('none');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
-    const userTypes = [
-        { value: 'core', label: 'Core' },
-        { value: 'non_core', label: 'Non-Core' },
-        { value: 'attendee', label: 'Attendee' },
-    ];
+  const userTypes = [
+    { value: 'core', label: 'Core' },
+    { value: 'non_core', label: 'Non-Core' },
+    { value: 'attendee', label: 'Attendee' },
+  ];
 
-    const roles = {
-        core: ['festival head', 'operational head'],
-        non_core: ['volunteer',  'executive'],
-        attendee: ['student', 'outsider'],
+  const roles = {
+    core: ['festival head', 'operational head'],
+    non_core: ['volunteer', 'executive'],
+    attendee: ['student', 'outsider'],
+  };
+
+  const departments = ['hospitality', 'events', 'sponsorship'];
+
+  const handleUserTypeChange = (e) => {
+    setUserType(e.target.value);
+    setRole('');
+    setDepartment('none');
+  };
+
+  const handleRoleChange = (e) => {
+    setRole(e.target.value);
+    if (userType === 'core' || userType === 'attendee') {
+      setDepartment('none');
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formData = {
+      name,
+      photo,
+      email,
+      phone,
+      password,
+      userType,
+      role,
+      department,
     };
 
-    const departments = ['hospitality', 'events', 'sponsorship'];
+    try {
+      const response = await axios.post('http://localhost:5000/register', formData);
+      setSuccessMessage(response.data.message || 'Registration successful!');
+      setErrorMessage('');
+    } catch (error) {
+      setErrorMessage(error.response?.data.message || 'An error occurred during registration.');
+      setSuccessMessage('');
+    }
+  };
 
-    const handleUserTypeChange = (e) => {
-        setUserType(e.target.value);
-        setRole('');
-        setDepartment('none');
-    };
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e] text-white flex items-center justify-center px-6 py-12">
+      <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-10 bg-white/10 backdrop-blur-md rounded-3xl p-10 shadow-2xl">
+        <div className="hidden md:flex flex-col justify-center items-center text-center px-4">
+          <h2 className="text-3xl font-extrabold mb-4">Welcome to Effervescence!</h2>
+          <p className="text-white/80">Join India’s most iconic cultural fest. Register now and be a part of the legacy!</p>
+          <img src="/assets/gallery/crowd.jpg" alt="Effervescence Crowd" className="w-full h-64 object-cover rounded-xl mt-6 shadow-lg" />
+        </div>
 
-    const handleRoleChange = (e) => {
-        setRole(e.target.value);
-        if (userType === 'core' || userType === 'attendee') {
-            setDepartment('none');
-        }
-    };
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <h1 className="text-3xl font-bold text-center md:text-left">Register</h1>
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const formData = {
-            name,
-            photo,
-            email,
-            phone,
-            password,
-            userType,
-            role,
-            department,
-        };
-
-        try {
-            const response = await axios.post('http://localhost:4000/register', formData);
-            setSuccessMessage(response.data.message || 'Registration successful!');
-            setErrorMessage('');
-        } catch (error) {
-            setErrorMessage(error.response?.data.message || 'An error occurred during registration.');
-            setSuccessMessage('');
-        }
-    };
-
-    return (
-        <form onSubmit={handleSubmit} className="registration-form">
-            <h1 className="form-title">Registration Form</h1>
-            
-            <div className="form-group">
-                <label htmlFor="name">Name:</label>
-                <input
-                    type="text"
-                    id="name"
-                    className="input"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                />
+          {[{
+            id: 'name', label: 'Name', value: name, setter: setName, type: 'text', required: true
+          }, {
+            id: 'photo', label: 'Photo URL', value: photo, setter: setPhoto, type: 'text'
+          }, {
+            id: 'email', label: 'Email', value: email, setter: setEmail, type: 'email', required: true
+          }, {
+            id: 'phone', label: 'Phone', value: phone, setter: setPhone, type: 'text', required: true
+          }, {
+            id: 'password', label: 'Password', value: password, setter: setPassword, type: 'password', required: true
+          }].map(({ id, label, value, setter, type, required }) => (
+            <div key={id}>
+              <label htmlFor={id} className="block mb-1 font-semibold">{label}</label>
+              <input
+                id={id}
+                type={type}
+                value={value}
+                onChange={(e) => setter(e.target.value)}
+                required={required}
+                className="w-full px-4 py-2 rounded-lg bg-white/10 text-white placeholder:text-white/70 focus:outline-none focus:ring-2 focus:ring-pink-400"
+              />
             </div>
+          ))}
 
-            <div className="form-group">
-                <label htmlFor="photo">Photo URL:</label>
-                <input
-                    type="text"
-                    id="photo"
-                    className="input"
-                    value={photo}
-                    onChange={(e) => setPhoto(e.target.value)}
-                />
-            </div>
+          <div>
+            <label htmlFor="userType" className="block mb-1 font-semibold">User Type</label>
+            <select
+              id="userType"
+              value={userType}
+              onChange={handleUserTypeChange}
+              required
+              className="w-full px-4 py-2 rounded-lg bg-white/10 text-black focus:outline-none focus:ring-2 focus:ring-pink-400"
+            >
+              <option value="">Select user type</option>
+              {userTypes.map((type) => (
+                <option key={type.value} value={type.value}>{type.label}</option>
+              ))}
+            </select>
+          </div>
 
-            <div className="form-group">
-                <label htmlFor="email">Email:</label>
-                <input
-                    type="email"
-                    id="email"
-                    className="input"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                />
-            </div>
+          <div>
+            <label htmlFor="role" className="block mb-1 font-semibold">Role</label>
+            <select
+              id="role"
+              value={role}
+              onChange={handleRoleChange}
+              disabled={!userType}
+              required
+              className="w-full px-4 py-2 rounded-lg bg-white/10 text-black focus:outline-none focus:ring-2 focus:ring-pink-400"
+            >
+              <option value="">Select role</option>
+              {userType && roles[userType].map((r) => (
+                <option key={r} value={r}>{r}</option>
+              ))}
+            </select>
+          </div>
 
-            <div className="form-group">
-                <label htmlFor="phone">Phone:</label>
-                <input
-                    type="text"
-                    id="phone"
-                    className="input"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    required
-                />
-            </div>
+          <div>
+            <label htmlFor="department" className="block mb-1 font-semibold">Department</label>
+            <select
+              id="department"
+              value={department}
+              onChange={(e) => setDepartment(e.target.value)}
+              disabled={userType === 'core' || userType === 'attendee'}
+              className="w-full px-4 py-2 rounded-lg bg-white/10 text-black focus:outline-none focus:ring-2 focus:ring-pink-400"
+            >
+              <option value="none">None</option>
+              {userType === 'non_core' && departments.map((dept) => (
+                <option key={dept} value={dept}>{dept}</option>
+              ))}
+            </select>
+          </div>
 
-            <div className="form-group">
-                <label htmlFor="password">Password:</label>
-                <input
-                    type="password"
-                    id="password"
-                    className="input"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
-            </div>
+          <button type="submit" className="w-full bg-pink-600 hover:bg-pink-700 transition text-white py-3 rounded-full font-bold shadow-md mt-4">
+            Register
+          </button>
 
-            <div className="form-group">
-                <label htmlFor="userType">User Type:</label>
-                <select
-                    id="userType"
-                    className="select"
-                    value={userType}
-                    onChange={handleUserTypeChange}
-                    required
-                >
-                    <option value="">Select user type</option>
-                    {userTypes.map((type) => (
-                        <option key={type.value} value={type.value}>
-                            {type.label}
-                        </option>
-                    ))}
-                </select>
-            </div>
-
-            <div className="form-group">
-                <label htmlFor="role">Role:</label>
-                <select
-                    id="role"
-                    className="select"
-                    value={role}
-                    onChange={handleRoleChange}
-                    disabled={!userType}
-                    required
-                >
-                    <option value="">Select role</option>
-                    {userType &&
-                        roles[userType].map((role) => (
-                            <option key={role} value={role}>
-                                {role}
-                            </option>
-                        ))}
-                </select>
-            </div>
-
-            <div className="form-group">
-                <label htmlFor="department">Department:</label>
-                <select
-                    id="department"
-                    className="select"
-                    value={department}
-                    onChange={(e) => setDepartment(e.target.value)}
-                    disabled={userType === 'core' || userType === 'attendee'}
-                >
-                    <option value="none">None</option>
-                    {userType === 'non_core' &&
-                        departments.map((dept) => (
-                            <option key={dept} value={dept}>
-                                {dept}
-                            </option>
-                        ))}
-                </select>
-            </div>
-
-            <button type="submit" className="button">Register</button>
-
-            {successMessage && <p className="success-message">{successMessage}</p>}
-            {errorMessage && <p className="error-message">{errorMessage}</p>}
+          {successMessage && <p className="mt-4 text-green-400 text-center font-medium">{successMessage}</p>}
+          {errorMessage && <p className="mt-4 text-red-400 text-center font-medium">{errorMessage}</p>}
         </form>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default RegistrationForm;
