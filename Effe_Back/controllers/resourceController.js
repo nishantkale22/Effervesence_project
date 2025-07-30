@@ -5,20 +5,12 @@ const User = require('../models/User');
 const Notification = require('../models/Notification');
 const { getSocketIo } = require('../socket');
 
-
 const uploadResource = asyncHandler(async (req, res) => {
-  try {
-    console.log(req.body) ;
-    if (!req.file) {
-      return res.status(400).json({ error: 'No file uploaded' });
-    }
-    const fileUrl = `http://localhost:5000/uploads/${req.file.filename}`;
-    res.json({ fileUrl });
-  } catch (error) {
-    console.error('File upload error:', error);
-    res.status(500).json({ message: 'Server error' });
+  if (!req.file?.cloudStoragePublicUrl) {
+    return res.status(400).json({ error: 'No file uploaded or GCS failed' });
   }
-  
+  const fileUrl = req.file.cloudStoragePublicUrl;
+  res.status(200).json({ fileUrl });
 });
 
 

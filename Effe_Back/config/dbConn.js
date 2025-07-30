@@ -3,10 +3,8 @@ const { logDatabaseActivity } = require('../middleware/logger');
 
 const connectDB = async () => {
     try {
-        await mongoose.connect(process.env.DATABASE_URI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
+     await mongoose.connect(process.env.DATABASE_URI);
+
 
         logDatabaseActivity('Database connected successfully.');
         console.log('Database connected successfully.');

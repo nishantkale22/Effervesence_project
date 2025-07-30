@@ -22,13 +22,13 @@ const login = asyncHandler(async (req, res) => {
     if (!match) return res.status(401).json({ message: 'Unauthorized: Invalid credentials' });
 
     const accessToken = jwt.sign(
-        { UserInfo: { id: foundUser._id, role: foundUser.role, userType: foundUser.userType } },
+        { UserInfo: { _id: foundUser._id, role: foundUser.role, userType: foundUser.userType } },  // ✅ changed to _id
         process.env.ACCESS_TOKEN_SECRET,
         { expiresIn: '15m' }
     );
 
     const refreshToken = jwt.sign(
-        { id: foundUser._id },
+        { _id: foundUser._id }, // ✅ changed to _id
         process.env.REFRESH_TOKEN_SECRET,
         { expiresIn: '7d' }
     );
@@ -73,12 +73,12 @@ const refresh = asyncHandler(async (req, res) => {
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, async (err, decoded) => {
         if (err) return res.status(403).json({ message: 'Forbidden' });
 
-        const foundUser = await User.findById(decoded.id).exec();
+        const foundUser = await User.findById(decoded._id).exec(); // ✅ changed to _id
 
         if (!foundUser) return res.status(401).json({ message: 'Unauthorized: User not found' });
 
         const accessToken = jwt.sign(
-            { UserInfo: { id: foundUser._id, role: foundUser.role } },
+            { UserInfo: { _id: foundUser._id, role: foundUser.role } }, // ✅ changed to _id
             process.env.ACCESS_TOKEN_SECRET,
             { expiresIn: '15m' }
         );

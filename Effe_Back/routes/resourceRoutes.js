@@ -2,13 +2,15 @@ const express = require('express');
 const router = express.Router();
 const verifyJWT = require('../middleware/verifyJWT');
 const resourceController = require('../controllers/resourceController');
-const upload = require('../middleware/upload');
+const { upload, uploadToGCS } = require('../middleware/uploadGCS');
 
+// Secure upload with JWT and Google Cloud integration
+router.post('/upload', verifyJWT, upload.single('file'), uploadToGCS, resourceController.uploadResource);
 
-router.post('/upload', upload.single('file'), resourceController.uploadResource);
+// Attach resource to task (requires login)
+router.post('/post', verifyJWT, resourceController.attatchResourceToTask);
 
-router.post('/post',resourceController.attatchResourceToTask) ;
-
-router.delete('/:resourceId/delete',resourceController.deleteResourceById ) ;
+// Delete resource (requires login)
+router.delete('/:resourceId/delete', verifyJWT, resourceController.deleteResourceById);
 
 module.exports = router;

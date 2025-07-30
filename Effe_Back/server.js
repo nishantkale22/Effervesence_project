@@ -32,6 +32,7 @@ const io = socketIo(server, {
     cors: {
         origin: 'http://localhost:3000',
         methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+        credentials: true, // <-- Added to allow credentials for Socket.io
     },
 });
 // // Set io instance to be used across the app
@@ -48,7 +49,17 @@ app.use('/auth', require('./routes/authRoutes'));
 app.use('/register', require('./routes/register'));
 app.use('/user', require('./routes/userRoutes')); // Dashboard redirection routes
 app.use('/task', require('./routes/taskRoutes'));
+app.use('/event', require('./routes/eventRoutes'));
+app.use('/upload', require('./routes/uploadRoutes'));
 app.use('/resource', require('./routes/resourceRoutes'));
+app.use('/meeting', require('./routes/meetingRoutes'));
+app.use('/chat', require('./routes/departmentChatRoutes'));
+
+// Management panel enhancements
+app.use('/merch', require('./routes/merchRoutes'));
+app.use('/announcements', require('./routes/announcementRoutes'));
+app.use('/schedule', require('./routes/scheduleRoutes'));
+app.use('/media', require('./routes/mediaRoutes'));
 
 
 // 404 Not Found handler

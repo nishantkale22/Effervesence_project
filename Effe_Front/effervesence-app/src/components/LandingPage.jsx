@@ -25,7 +25,7 @@ const LandingPage = () => {
 
   const artists = useMemo(
     () => [
-      { img: '/assets/gallery/effe_artist1.jpg', name: 'Divine Live Performance' },
+      { img: '/images/Sanam.png', name: 'Sanam Live Performance' },
       { img: '/assets/gallery/effe_artist2.jpg', name: 'Armaan Malik Concert' },
       { img: '/assets/gallery/effe_artist3.jpg', name: 'Bollywood Night with Indian Ocean' }
     ],
@@ -126,11 +126,12 @@ const LandingPage = () => {
             key={artistIdx}
             src={artists[artistIdx].img}
             alt={artists[artistIdx].name}
-            className="w-full h-96 object-cover rounded-xl shadow-lg"
+            className="w-full h-96 object-contain bg-black p-4 rounded-xl shadow-lg"
             initial={{ opacity: 0.4, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
           />
+
           <p className="mt-4 text-center text-xl font-semibold">{artists[artistIdx].name}</p>
         </div>
       </section>

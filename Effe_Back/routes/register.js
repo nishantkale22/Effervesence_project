@@ -1,13 +1,12 @@
-
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
-const { logDatabaseActivity } = require('../middleware/logger'); // Import logDatabaseActivity
+const { logDatabaseActivity } = require('../middleware/logger');
 
 // POST: Register User
 router.post('/', async (req, res) => {
-    const { name, email, phone, password, userType, role, department } = req.body;
+    const { name, email, phone, password, userType, role, department, photo } = req.body;
 
     try {
         // Check if the user already exists
@@ -29,13 +28,14 @@ router.post('/', async (req, res) => {
             userType,
             role,
             department: department || 'none',
+            photo: photo || '', // ✅ Store uploaded photo URL
         });
 
-        const savedUser = await newUser.save(); // Save to MongoDB
+        const savedUser = await newUser.save();
 
-        // Log the saved user data
         logDatabaseActivity(`User registered: ID=${savedUser._id}, Name=${savedUser.name}, Email=${savedUser.email}`);
-        console.log(` user registered with email as ${savedUser.email}`)
+        console.log(`User registered with email: ${savedUser.email}`);
+
         res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
         console.error(error);

@@ -68,7 +68,7 @@ const postTaskWithResource = asyncHandler (async (req, res) => {
       for(let assignedUser of assignedUsers){
         const newNotification = new Notification({
             userId: assignedUser._id ,
-            message: `task assigned to you by ${assigner.name}` 
+            message: `task(${newTask.title}) assigned to you by ${assigner.name}` 
 
         }) ;
         await newNotification.save() ;
@@ -196,6 +196,7 @@ const deleteAllocationById = asyncHandler(async (req, res) => {
 
 const updateAllocationStatusById = asyncHandler(async (req, res) => {
   try {
+    const io = getSocketIo(); // Get the shared io instance
     const { allocationId } = req.params;
     console.log(allocationId) 
     if (!allocationId || allocationId === 'undefined') {
@@ -204,7 +205,25 @@ const updateAllocationStatusById = asyncHandler(async (req, res) => {
 
     const task = await Task.findByIdAndUpdate(allocationId,{
       taskStatus : 'complete' ,
-    }) ;
+    }).populate('assignedTo').populate('assignedBy') ;
+
+    const assignedUsers = task.assignedTo ;
+    const assigner = task.assignedBy ;
+
+    for(let assignedUser of assignedUsers){
+      const newNotification = new Notification({
+          userId: assignedUser._id ,
+          message: `task (${task.title}) was marked completed  by ${assigner.name}` 
+
+      }) ;
+      await newNotification.save() ;
+
+              // Emit the notification to the specific user
+              io.to(assignedUser._id.toString()).emit('receiveNotification', newNotification);
+              io.to(assignedUser._id.toString()).emit('unreadCount');
+
+    }
+
     res.json({message : 'Allocation updated successfully'}) ;
     
     

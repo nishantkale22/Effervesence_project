@@ -83,7 +83,10 @@ const AllocationDetails = () => {
 
         try {
             const { data } = await axiosInstance.post('/resource/upload', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+                },
             });
 
             if (!data.fileUrl) {

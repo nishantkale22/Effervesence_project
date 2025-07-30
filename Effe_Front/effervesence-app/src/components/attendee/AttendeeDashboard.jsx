@@ -4,7 +4,7 @@ import axiosInstance from '../../api/axiosInstance';
 import '../../styles/dashboard.css'; // Add CSS for styling
 
 const AttendeeDashboard = () => {
-    const { role, department, _id } = useParams();
+    const { _id } = useParams();
     const [user, setUser] = useState(null);
     const [error, setError] = useState('');
     useEffect(() => {
@@ -14,7 +14,7 @@ const AttendeeDashboard = () => {
                 if (!token) throw new Error('No access token found');
     
                 const { data } = await axiosInstance.get(
-                    `/user/attendee/${role}/${department}/dashboard/${_id}`,
+                    `/user/attendee/${_id}`,
                     { headers: { Authorization: `Bearer ${token}` } }
                 );
     
@@ -27,7 +27,7 @@ const AttendeeDashboard = () => {
         };
     
         fetchUserData();
-    }, [_id,  role, department]);
+    }, [_id]);
 
     return (
         <div className="dashboard-container">

@@ -1,5 +1,7 @@
 const User = require('../models/User'); // Import the User model
 const Task = require('../models/Task'); // Import the Task model
+const Event = require('../models/Event'); // Import the Event model
+
 const asyncHandler = require('express-async-handler');
 
 // Controller to get user by ID
@@ -67,7 +69,7 @@ const getUserTasks = asyncHandler(async (req, res) => {
 // Controller to get all users
 const getAllUsers = asyncHandler(async (req, res) => {
     try {
-        const users = await User.find({}, '-password' );
+        const users = await User.find({}, '-password');
         if (users.length === 0) {
             return res.status(404).json({ message: 'No users found' });
         }
@@ -81,9 +83,9 @@ const getAllUsers = asyncHandler(async (req, res) => {
 // Controller to get all volunteers
 const getAllVolunteers = asyncHandler(async (req, res) => {
     try {
-        const {department} = req.params 
+        const { department } = req.params
         // Find all users with the role of 'volunteer'
-        const volunteers = await User.find({ role: 'volunteer' , department: `${department}` });
+        const volunteers = await User.find({ role: 'volunteer', department: `${department}` });
 
         if (volunteers.length === 0) {
             return res.status(404).json({ message: 'No volunteers found' });
@@ -99,10 +101,10 @@ const getAllVolunteers = asyncHandler(async (req, res) => {
 // Controller to get all executives
 const getAllExecutives = asyncHandler(async (req, res) => {
     try {
-        const {department} = req.params 
+        const { department } = req.params
 
         // Find all users with the role of 'executive'
-        const executives = await User.find({ role: 'executive', department:`${department}` });
+        const executives = await User.find({ role: 'executive', department: `${department}` });
 
         if (executives.length === 0) {
             return res.status(404).json({ message: 'No executives found' });
@@ -135,7 +137,7 @@ const getAllCoordinators = asyncHandler(async (req, res) => {
 
 const getUserAllocations = asyncHandler(async (req, res) => {
     try {
-        const {_id} = req.params ;
+        const { _id } = req.params;
 
         const Tasks = await Task.find({ assignedBy: _id });
 
@@ -150,7 +152,47 @@ const getUserAllocations = asyncHandler(async (req, res) => {
     }
 });
 
+const getUserRegisteredEvents = asyncHandler(async (req, res) => {
+    try {
+        const { _id } = req.params;
+        const user = await User.findById(_id).populate('eventsRegistered');
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        if (!user.eventsRegistered || user.eventsRegistered.length === 0) {
+            return res.status(404).json({ message: 'No registered events found' });
+        }
+        res.json({ registeredEvents: user.eventsRegistered });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
 
+// Get all users in the same department as the requester (excluding self)
+const getDepartmentMembers = asyncHandler(async (req, res) => {
+    const requesterId = req.user._id;
+    const requester = await User.findById(requesterId);
+    if (!requester) return res.status(404).json({ message: 'Requester not found' });
+    const users = await User.find({
+        department: requester.department,
+        _id: { $ne: requesterId }
+    }, '-password');
+    res.json({ users });
+});
+
+const getCurrentUser = asyncHandler(async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.json({ user });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
 
 module.exports = {
     getUserById,
@@ -161,4 +203,7 @@ module.exports = {
     getAllExecutives,
     getAllCoordinators,
     getUserAllocations,
+    getUserRegisteredEvents,
+    getDepartmentMembers,
+    getCurrentUser
 };
