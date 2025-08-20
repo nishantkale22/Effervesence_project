@@ -85,4 +85,4 @@ Cloud: Google Cloud Storage
 
 Payments: Razorpay
 
-Others: Docker (Compose), Firebase Auth (future integration), Redis (caching)
+
