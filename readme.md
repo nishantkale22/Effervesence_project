@@ -85,4 +85,59 @@ Cloud: Google Cloud Storage
 
 Payments: Razorpay
 
+⚙️ Installation & Running Instructions
+1️⃣ Clone the Repository
+# Clone the repo
 
+cd effervesence-app
+
+2️⃣ Backend Setup
+# Go into backend folder
+cd Effe_Back
+
+# Install dependencies
+npm install
+
+
+Create a .env file inside backend/ with the following variables:
+
+PORT=5000
+MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/effe
+JWT_SECRET=your_jwt_secret
+
+# Google Cloud Storage
+GCLOUD_KEY_FILE=service-account.json
+GCLOUD_PROJECT_ID=your_project_id
+GCLOUD_BUCKET=your_bucket_name
+
+# Razorpay
+RAZORPAY_KEY_ID=your_razorpay_key
+RAZORPAY_KEY_SECRET=your_razorpay_secret
+
+
+Then run:
+
+# Start backend in development
+npm run dev
+
+# Or start backend in production
+npm start
+
+
+By default backend runs at:
+👉 http://localhost:5000
+
+3️⃣ Frontend Setup
+
+Open a new terminal:
+
+# Go to frontend folder
+cd ../frontend
+
+# Install dependencies
+npm install
+
+
+Start the React app:
+
+npm run dev
